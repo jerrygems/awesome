@@ -666,18 +666,40 @@ local separatorCircletop = wibox.container.margin(separatorCircle, 0, 0, 4, 15)
 -- Clock
 local clock_format = "%H\n%M\n%S"
 local clock_widget = wibox.widget.textclock(clock_format, 1)
+clock_widget.font = "JetBrainsMono Nerd Font 10"
 
-local rounded_clock_container = wibox.widget {
+local rect_angle = wibox.widget {
     {
-        clock_widget,
+        {
+            clock_widget,
+            widget = wibox.container.margin,
+            left = 6,
+        },
         widget = wibox.container.background,
+        bg = "#000000",
         fg = "#8c52ff",
         shape = gears.shape.rounded_rect,
-        margins = 4,
-        border_width = 3,
+        forced_width = 28,
+        forced_height = 65,
     },
     layout = wibox.container.place,
-    halign = "center",
+    halign = "center", -- Center horizontally
+    valign = "center", -- Center vertically
+}
+
+local rounded_clock_container = wibox.widget {
+    layout = wibox.container.place,
+    {
+        rect_angle,
+        widget = wibox.container.background,
+        bg = "#8c52ff",
+        shape = gears.shape.rounded_rect,
+        forced_width = 35,
+        forced_height = 65
+        
+    },
+    halign="center",
+    valign="center"
 }
 -- setup
 wb:setup {
