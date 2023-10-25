@@ -604,7 +604,9 @@ local wb = awful.wibar {
     ontop = false,
     border_width = 4,
     border_color = "#8c52ff",
-    shape = gears.shape.rounded_rect
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 15)
+    end,
 }
 
 -- icons
@@ -639,11 +641,15 @@ local icons2 = {
     "/home/spidey/Downloads/reddit.png",
     "/home/spidey/Downloads/spotify.png",
 }
+local icons3 = {
+    "/home/spidey/Downloads/power.png",
+}
 
 -- Create icon containers using the function
 local centered_icon1 = wibox.container.place(createIconContainer(icons1), "center")
 local centered_icon2 = wibox.container.place(createIconContainer(icons2), "center")
-
+local centered_icon3 = wibox.container.place(createIconContainer(icons3), "center")
+centered_icon3.fg = "#ffffff"
 -- separator
 
 local separatorLine = wibox.widget {
@@ -666,14 +672,14 @@ local separatorCircletop = wibox.container.margin(separatorCircle, 0, 0, 4, 15)
 -- Clock
 local clock_format = "%H\n%M\n%S"
 local clock_widget = wibox.widget.textclock(clock_format, 1)
-clock_widget.font = "JetBrainsMono Nerd Font 10"
+clock_widget.font = "JetBrainsMono Nerd Font 10 bold"
 
 local rect_angle = wibox.widget {
     {
         {
             clock_widget,
             widget = wibox.container.margin,
-            left = 6,
+            left = 3,
         },
         widget = wibox.container.background,
         bg = "#000000",
@@ -712,5 +718,6 @@ wb:setup {
     -- separator
     centered_icon2,
     paddedLine,
-    rounded_clock_container
+    rounded_clock_container,
+    centered_icon3
 }
