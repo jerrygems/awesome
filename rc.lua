@@ -2,6 +2,7 @@
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
 
+local vicious = require("vicious")
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -702,22 +703,109 @@ local rounded_clock_container = wibox.widget {
         shape = gears.shape.rounded_rect,
         forced_width = 35,
         forced_height = 65
-        
+
     },
-    halign="center",
-    valign="center"
+    halign = "center",
+    valign = "center"
 }
+-- grouping
+local icon1_group = wibox.layout.align.vertical()
+icon1_group:set_top(centered_icon1)
+
+local icon2_group = wibox.layout.align.vertical()
+icon2_group:set_middle(centered_icon2)
+
+local icon3_group = wibox.layout.fixed.vertical()
+icon3_group:add(paddedLine)
+-- Add the clock widget (rounded_clock_container) to group_three
+icon3_group:add(rounded_clock_container)
+-- Add the power button (centered_icon3) to group_three
+icon3_group:add(centered_icon3)
+
+local icon3_grp = wibox.container.margin(icon3_group, 0, 0, 380, 0)
+
+
 -- setup
 wb:setup {
+
     layout = wibox.layout.fixed.vertical,
-    centered_icon1,
+    icon1_group,
     -- separator
     separatorCirclebottom,
     separatorLine,
     separatorCircletop,
     -- separator
-    centered_icon2,
+    icon2_group,
     paddedLine,
-    rounded_clock_container,
-    centered_icon3
+    icon3_grp
+}
+
+
+
+-- second group top bar
+-- Bar two customizations
+local wb = awful.wibar {
+    position = "top",
+    width = 1800,
+    height = 46,
+    bg = "#000000",
+    fg = "#ffffffff",
+    ontop = false,
+    border_width = 4,
+    border_color = "#8c52ff",
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 15)
+    end,
+}
+
+-- icons
+local function createIconContainer(icons)
+    local icon_container = wibox.layout.fixed.horizontal()
+
+    for _, icon_path in ipairs(icons) do
+        local icon_widget = wibox.widget {
+            image = icon_path,
+            resize = true,
+            forced_width = 30,
+            forced_height = 30,
+            widget = wibox.widget.imagebox,
+        }
+        local icon_with_margin = wibox.container.margin(icon_widget, 0, 0, 8, 4)
+        icon_container:add(icon_with_margin)
+    end
+
+    return icon_container
+end
+
+-- Define your sets of icons
+local icons1 = {
+    "/home/spidey/Downloads/menu.png"
+}
+
+local icons2 = {
+    "/home/spidey/Downloads/Vector.png",
+    "/home/spidey/Downloads/firefox.png",
+    "/home/spidey/Downloads/github.png",
+    "/home/spidey/Downloads/docker.png",
+    "/home/spidey/Downloads/reddit.png",
+    "/home/spidey/Downloads/spotify.png",
+}
+local icons3 = {
+    "/home/spidey/Downloads/power.png",
+}
+
+
+-- setup
+wb:setup {
+
+    layout = wibox.layout.fixed.vertical,
+    icon1_group,
+    -- separator
+    separatorCirclebottom,
+    separatorLine,
+    separatorCircletop,
+    -- separator
+    icon2_group,
+    paddedLine,
+    icon3_grp
 }
