@@ -606,7 +606,7 @@ local wb = awful.wibar {
     border_width = 4,
     border_color = "#8c52ff",
     shape = function(cr, width, height)
-        gears.shape.rounded_rect(cr, width, height, 15)
+        gears.shape.rounded_rect(cr, width, height, 12)
     end,
 }
 
@@ -641,6 +641,7 @@ local icons2 = {
     "/home/spidey/Downloads/docker.png",
     "/home/spidey/Downloads/reddit.png",
     "/home/spidey/Downloads/spotify.png",
+    "/home/spidey/Downloads/vbox.png",
 }
 local icons3 = {
     "/home/spidey/Downloads/power.png",
@@ -722,7 +723,7 @@ icon3_group:add(rounded_clock_container)
 -- Add the power button (centered_icon3) to group_three
 icon3_group:add(centered_icon3)
 
-local icon3_grp = wibox.container.margin(icon3_group, 0, 0, 380, 0)
+local icon3_grp = wibox.container.margin(icon3_group, 0, 0, 340, 0)
 
 
 -- setup
@@ -744,23 +745,22 @@ wb:setup {
 
 -- second group top bar
 -- Bar two customizations
-local wb = awful.wibar {
+local wb1 = awful.wibar {
     position = "top",
     width = 1800,
-    height = 46,
+    height = 40,
     bg = "#000000",
     fg = "#ffffffff",
     ontop = false,
     border_width = 4,
     border_color = "#8c52ff",
     shape = function(cr, width, height)
-        gears.shape.rounded_rect(cr, width, height, 15)
+        gears.shape.rounded_rect(cr, width, height, 12)
     end,
 }
 
--- icons
-local function createIconContainer(icons)
-    local icon_container = wibox.layout.fixed.horizontal()
+local function createHorizontalIconContainer(icons)
+    local icon_container = wibox.layout.fixed.vertical()
 
     for _, icon_path in ipairs(icons) do
         local icon_widget = wibox.widget {
@@ -777,35 +777,40 @@ local function createIconContainer(icons)
     return icon_container
 end
 
--- Define your sets of icons
-local icons1 = {
-    "/home/spidey/Downloads/menu.png"
-}
-
-local icons2 = {
-    "/home/spidey/Downloads/Vector.png",
-    "/home/spidey/Downloads/firefox.png",
-    "/home/spidey/Downloads/github.png",
-    "/home/spidey/Downloads/docker.png",
-    "/home/spidey/Downloads/reddit.png",
-    "/home/spidey/Downloads/spotify.png",
-}
-local icons3 = {
-    "/home/spidey/Downloads/power.png",
-}
-
-
 -- setup
-wb:setup {
-
-    layout = wibox.layout.fixed.vertical,
-    icon1_group,
-    -- separator
-    separatorCirclebottom,
-    separatorLine,
-    separatorCircletop,
-    -- separator
-    icon2_group,
-    paddedLine,
-    icon3_grp
+wb1:setup {
+    layout = wibox.layout.fixed.horizontal,
+    
 }
+
+
+local date_widget = wibox.widget.textbox()
+local update_date_widget = function()
+    awful.spawn.easy_async("date +'%A %d %B %Y %I:%M %p'", function(stdout)
+        date_widget:set_markup("<span color='#ffffff'>" .. stdout .. "</span>")
+        date_widget.font = "JetBrainsMono Nerd Font 10 bold"
+    end)
+end
+update_date_widget()
+
+local date_timer = timer({ timeout = 60 })
+date_timer:connect_signal("timeout", update_date_widget)
+date_timer:start()
+
+local date_popup = awful.popup {
+    widget = date_widget,
+    border_width = 4,
+    border_color ='#8c52ff', 
+    bg='#00000000',
+    ontop = false,
+    shape = function(cr, width, height)
+        gears.shape.rounded_rect(cr, width, height, 6)
+    end,
+}
+awful.placement.top_right(date_popup, { margins = { top = 100, right = 1800 }, parent = awful.screen.focused() })
+
+date_popup.visible = true
+
+awesome.connect_signal("startup", function()
+    update_date_widget()
+end)
