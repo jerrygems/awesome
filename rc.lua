@@ -780,37 +780,114 @@ end
 -- setup
 wb1:setup {
     layout = wibox.layout.fixed.horizontal,
-    
+
 }
 
+-- inet speed here
 
-local date_widget = wibox.widget.textbox()
-local update_date_widget = function()
-    awful.spawn.easy_async("date +'%A %d %B %Y %I:%M %p'", function(stdout)
-        date_widget:set_markup("<span color='#ffffff'>" .. stdout .. "</span>")
-        date_widget.font = "JetBrainsMono Nerd Font 10 bold"
-    end)
+local inet_speed = wibox.widget.textbox()
+inet_speed.font = "JetBrainsMono Nerd Font 11"
+local update_speed = function()
+    -- Update inet_speed widget with vicious
+    vicious.register(inet_speed, vicious.widgets.net,
+        '<span color="#8c52ff">Download Speed\t : \t${wlp61s0 down_kb} KB/s ⬇️ \nUpload Speed\t : \t${wlp61s0 up_kb} KB/s ⬆️</span>'
+    )
 end
-update_date_widget()
 
-local date_timer = timer({ timeout = 60 })
-date_timer:connect_signal("timeout", update_date_widget)
-date_timer:start()
+update_speed()
 
-local date_popup = awful.popup {
-    widget = date_widget,
-    border_width = 4,
-    border_color ='#8c52ff', 
-    bg='#00000000',
-    ontop = false,
-    shape = function(cr, width, height)
-        gears.shape.rounded_rect(cr, width, height, 6)
-    end,
-}
-awful.placement.top_right(date_popup, { margins = { top = 100, right = 1800 }, parent = awful.screen.focused() })
-
-date_popup.visible = true
-
-awesome.connect_signal("startup", function()
-    update_date_widget()
+local speed_timer = timer({ timeout = 0.3 })
+speed_timer:connect_signal("timeout", function()
+    update_speed()
 end)
+speed_timer:start()
+
+-- custom line
+
+local paddedLineSpeed = wibox.widget {
+    layout = wibox.layout.fixed.vertical,
+    {
+        layout = wibox.layout.margin,
+        separatorLine,
+        forced_width = 100,
+    }
+}
+
+-- ip addresses here
+local ip_widget = wibox.widget.textbox()
+ip_widget.font = "JetBrainsMono Nerd Font 10" -- Set your desired font and size
+
+local ip_container = wibox.layout.fixed.vertical()
+-- Update function to fetch and update IP addresses
+local function update_ip_widget()
+    local interfaces = { "enp62s0", "ngrok0", "tun0", "tun1", "wlp61s0", "docker0" }
+    local ip_text = ""
+    ip_container:reset()
+    for _, iface in ipairs(interfaces) do
+        awful.spawn.easy_async("ip addr show " .. iface, function(stdout)
+            local ip = string.match(stdout, "inet (%d+%.%d+%.%d+%.%d+)")
+            if ip then
+                local centered_ip_widget = wibox.container.place(ip_widget, "center", "center")
+                ip_container:add(centered_ip_widget)
+                ip_text = "<span color='#8c52ff' >" .. ip_text .. iface .. "\t:\t" .. ip .. " </span>\n"
+            end
+            ip_widget:set_text(ip_text:sub(1, -4))
+            ip_widget:set_markup(ip_text)
+        end)
+    end
+end
+
+update_ip_widget()
+
+--
+--
+local cava_log = io.open("/tmp/cava.log", "w")
+
+local cava_widget = awful.widget.watch("/usr/bin/cava", 1, function(widget, stdout)
+    widget:set_text(stdout)
+    cava_log:write(stdout)
+    cava_log:flush()
+end)
+
+
+local speed_popup = awful.popup {
+    widget = wibox.widget {
+        layout = wibox.layout.fixed.vertical,
+
+        {
+            layout = wibox.container.margin,
+            bottom = 20,
+            {
+                inet_speed,
+                left = 30,
+                layout = wibox.container.margin,
+            },
+            forced_height = 80,
+            forced_width = 400,
+        },
+        wibox.container.margin(paddedLineSpeed, 0, 0, -10, 5),
+        {
+            layout = wibox.container.margin,
+            bottom = 20,
+            {
+                cava_widget,
+                top = 0,
+                left = 30,
+                layout = wibox.container.margin,
+
+            },
+            forced_height = 120,
+            forced_width = 400,
+        },
+    },
+    border_width = 4,
+    border_color = '#8c52ff',
+    bg = '#00000000',
+    ontop = false,
+    shape = function(cr, w, h)
+        gears.shape.rounded_rect(cr, w, h, 14)
+    end
+}
+
+awful.placement.top_right(speed_popup, { margins = { top = 160, right = 1700 }, parent = awful.screen.focused() })
+speed_popup.visible = true
