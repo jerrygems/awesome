@@ -777,6 +777,8 @@ local function createHorizontalIconContainer(icons)
     return icon_container
 end
 
+
+
 -- setup
 wb1:setup {
     layout = wibox.layout.fixed.horizontal,
@@ -796,7 +798,7 @@ end
 
 update_speed()
 
-local speed_timer = timer({ timeout = 0.3 })
+local speed_timer = timer({ timeout = 1 })
 speed_timer:connect_signal("timeout", function()
     update_speed()
 end)
@@ -864,7 +866,7 @@ local speed_popup = awful.popup {
             layout = wibox.container.margin,
             bottom = 20,
             {
-                
+                ip_widget,
                 top = 0,
                 left = 30,
                 layout = wibox.container.margin,
