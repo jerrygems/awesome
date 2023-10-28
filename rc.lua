@@ -798,7 +798,7 @@ end
 
 update_speed()
 
-local speed_timer = timer({ timeout = 1 })
+local speed_timer = timer({ timeout = 0.5 })
 speed_timer:connect_signal("timeout", function()
     update_speed()
 end)
