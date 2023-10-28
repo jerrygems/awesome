@@ -840,15 +840,9 @@ end
 update_ip_widget()
 
 --
---
-local cava_log = io.open("/tmp/cava.log", "w")
 
-local cava_widget = awful.widget.watch("/usr/bin/cava", 1, function(widget, stdout)
-    widget:set_text(stdout)
-    cava_log:write(stdout)
-    cava_log:flush()
-end)
 
+-- Start the timer
 
 local speed_popup = awful.popup {
     widget = wibox.widget {
@@ -870,7 +864,7 @@ local speed_popup = awful.popup {
             layout = wibox.container.margin,
             bottom = 20,
             {
-                cava_widget,
+                
                 top = 0,
                 left = 30,
                 layout = wibox.container.margin,
