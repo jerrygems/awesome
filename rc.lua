@@ -776,7 +776,11 @@ local function createHorizontalIconContainer(icons)
     return icon_container
 end
 
-
+local tag_icons = {
+    "icon1.png",
+    "icon2.png",
+    "icon3.png",
+}
 
 local taglist = awful.widget.taglist {
     screen          = awful.screen.focused(),
@@ -787,6 +791,7 @@ local taglist = awful.widget.taglist {
         shape = gears.shape.powerline,
         shape_border_color = '#8c52ff', -- Change this color to match base_color
         shape_border_width = 3,
+        bg_focus = "#000000"
     },
     layout          = {
         spacing        = -12,
@@ -800,10 +805,11 @@ local taglist = awful.widget.taglist {
     },
     widget_template = {
         {
-
+            bg = "#8c52ff",
             {
                 {
                     {
+
                         {
                             id     = 'index_role',
                             widget = wibox.widget.textbox,
@@ -811,9 +817,9 @@ local taglist = awful.widget.taglist {
                         },
                         margins = 4,
                         widget  = wibox.container.margin,
-                        color   = "#8c52ff"
                     },
-                    bg     = '#00000000',
+                    bg     = '#000000',
+                    bg_focus = "#8c52ff",
                     shape  = gears.shape.circle,
                     widget = wibox.container.background,
                 },
@@ -822,13 +828,10 @@ local taglist = awful.widget.taglist {
                         id     = 'icon_role',
                         widget = wibox.widget.imagebox,
                     },
-                    margins = 2,
+                    margins = 0,
                     widget  = wibox.container.margin,
                 },
-                {
-                    id     = 'text_role',
-                    widget = wibox.widget.textbox,
-                },
+                
                 layout = wibox.layout.fixed.horizontal,
             },
             left   = 18,
@@ -845,7 +848,7 @@ local taglist = awful.widget.taglist {
                     self.backup     = self.bg
                     self.has_backup = true
                 end
-                self.bg = '#ff0000'
+                self.bg = '#8c52ff'
             end)
             self:connect_signal('mouse::leave', function()
                 if self.has_backup then self.bg = self.backup end
@@ -857,6 +860,7 @@ local taglist = awful.widget.taglist {
     },
     buttons         = taglist_buttons
 }
+
 
 -- Create a container to hold the line and taglist
 local container = wibox.layout.fixed.vertical()
