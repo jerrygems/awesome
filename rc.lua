@@ -611,16 +611,19 @@ local wb = awful.wibar {
 }
 
 -- icons
-local function createIconContainer(icons)
+local function createIconContainer(icons, commandsList)
     local icon_container = wibox.layout.fixed.vertical()
 
-    for _, icon_path in ipairs(icons) do
+    for i, icon_path in ipairs(icons) do
         local icon_widget = wibox.widget {
             image = icon_path,
             resize = true,
             forced_width = 30,
             forced_height = 30,
             widget = wibox.widget.imagebox,
+            on_click = function()
+                awful.spawn.with_shell("rofi -show drun")
+            end
         }
         local icon_with_margin = wibox.container.margin(icon_widget, 0, 0, 8, 4)
         icon_container:add(icon_with_margin)
@@ -629,9 +632,24 @@ local function createIconContainer(icons)
     return icon_container
 end
 
+
 -- Define your sets of icons
+local cmdList1 = {
+    "rofi -show dmenu"
+}
+
 local icons1 = {
     "/home/spidey/Downloads/menu.png"
+}
+
+local cmdList2 = {
+    "rofi -show dmenu",
+    "rofi -show dmenu",
+    "rofi -show dmenu",
+    "rofi -show dmenu",
+    "rofi -show dmenu",
+    "rofi -show dmenu",
+    "rofi -show dmenu",
 }
 
 local icons2 = {
@@ -643,14 +661,19 @@ local icons2 = {
     "/home/spidey/Downloads/spotify.png",
     "/home/spidey/Downloads/vbox.png",
 }
+
+local cmdList3 = {
+    "rofi -show dmenu"
+}
+
 local icons3 = {
     "/home/spidey/Downloads/power.png",
 }
 
 -- Create icon containers using the function
-local centered_icon1 = wibox.container.place(createIconContainer(icons1), "center")
-local centered_icon2 = wibox.container.place(createIconContainer(icons2), "center")
-local centered_icon3 = wibox.container.place(createIconContainer(icons3), "center")
+local centered_icon1 = wibox.container.place(createIconContainer(icons1,cmdList1), "center")
+local centered_icon2 = wibox.container.place(createIconContainer(icons2,cmdList2), "center")
+local centered_icon3 = wibox.container.place(createIconContainer(icons3,cmdList3), "center")
 centered_icon3.fg = "#ffffff"
 -- separator
 
@@ -658,7 +681,7 @@ local separatorLine = wibox.widget {
     widget = wibox.widget.separator,
     shape = gears.shape.rounded_bar,
     color = "#8c52ff",
-    forced_width = 1000,
+    forced_width = 0,
     forced_height = 6,
 }
 
@@ -805,21 +828,20 @@ local wb1 = awful.wibar {
 --     return icon_container
 -- end
 
-local icon1 = "/home/spidey/Downloads/code1.png"
-local icon2 = "/home/spidey/Downloads/code.png"
-local icon3 = "/home/spidey/Downloads/code.png"
-local icon4 = "/home/spidey/Downloads/code.png"
-local icon5 = "/home/spidey/Downloads/code.png"
-local icon6 = "/home/spidey/Downloads/code.png"
-local icon7 = "/home/spidey/Downloads/code.png"
-local icon8 = "/home/spidey/Downloads/code.png"
-local icon9 = "/home/spidey/Downloads/code.png"
-
+local icon1 = "/home/spidey/Downloads/house1.png"
+local icon2 = "/home/spidey/Downloads/bash.png"
+local icon3 = "/home/spidey/Downloads/bash.png"
+local icon4 = "/home/spidey/Downloads/bash.png"
+local icon5 = "/home/spidey/Downloads/browser.png"
+local icon6 = "/home/spidey/Downloads/vm.png"
+local icon7 = "/home/spidey/Downloads/code1.png"
+local icon8 = "/home/spidey/Downloads/code1.png"
+local icon9 = "/home/spidey/Downloads/chat.png"
 
 local taglist = awful.widget.taglist {
     screen          = awful.screen.focused(),
     filter          = function(t, args)
-        if t.selected or #t:clients() > 0 then
+        if #t:clients() > 0 then
             return true
         end
     end,
@@ -827,13 +849,13 @@ local taglist = awful.widget.taglist {
     style           = {
         shape = gears.shape.powerline,
         shape_border_color = '#8c52ff',
-        shape_border_width = 3,
+        shape_border_width = 1,
         bg_focus = "#8c52ff",
         bg_occupied = "#000000",
-        bg_urgent = "#8c52ff"
+        bg_urgent = "#8c52ff",
     },
     layout          = {
-        spacing        = -12,
+        spacing        = -16,
         spacing_widget = {
             color  = '#8c52ff',
             shape  = gears.shape.powerline,
@@ -873,9 +895,6 @@ local taglist = awful.widget.taglist {
             left   = 18,
             right  = 18,
             widget = wibox.container.margin,
-        },
-        style = {
-            color = "#",
         },
         id              = 'background_role',
         widget          = wibox.container.background,
@@ -919,19 +938,17 @@ local taglist = awful.widget.taglist {
 }
 
 -- Create a container to hold the line and taglist
-separatorLine.forced_width = 100
-separatorLine.forced_height = 4
+
 local container = wibox.layout.fixed.vertical()
 container:setup {
     {
-        wibox.container.margin(taglist, 10, 0, 2, 4),
-        separatorLine,
+        wibox.container.margin(taglist, 10, 0, 2, 2),
         layout = wibox.layout.fixed.vertical
     },
     widget = wibox.container.margin,
     margins = 4,
     bg = "#8c52ff",
-    forced_height = 40,
+    forced_height = 46,
 
 }
 
