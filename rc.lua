@@ -658,6 +658,7 @@ local separatorLine = wibox.widget {
     widget = wibox.widget.separator,
     shape = gears.shape.rounded_bar,
     color = "#8c52ff",
+    forced_width = 1000,
     forced_height = 6,
 }
 
@@ -743,6 +744,34 @@ wb:setup {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- Bar two customizations
 local wb1 = awful.wibar {
     position = "top",
@@ -758,40 +787,50 @@ local wb1 = awful.wibar {
     end,
 }
 
-local function createHorizontalIconContainer(icons)
-    local icon_container = wibox.layout.fixed.vertical()
+-- local function createHorizontalIconContainer(icons)
+--     local icon_container = wibox.layout.fixed.vertical()
 
-    for _, icon_path in ipairs(icons) do
-        local icon_widget = wibox.widget {
-            image = icon_path,
-            resize = true,
-            forced_width = 30,
-            forced_height = 30,
-            widget = wibox.widget.imagebox,
-        }
-        local icon_with_margin = wibox.container.margin(icon_widget, 0, 0, 8, 4)
-        icon_container:add(icon_with_margin)
-    end
+--     for _, icon_path in ipairs(icons) do
+--         local icon_widget = wibox.widget {
+--             image = icon_path,
+--             resize = true,
+--             forced_width = 30,
+--             forced_height = 30,
+--             widget = wibox.widget.imagebox,
+--         }
+--         local icon_with_margin = wibox.container.margin(icon_widget, 0, 0, 8, 4)
+--         icon_container:add(icon_with_margin)
+--     end
 
-    return icon_container
-end
+--     return icon_container
+-- end
 
-local tag_icons = {
-    "icon1.png",
-    "icon2.png",
-    "icon3.png",
-}
+local icon1 = "/home/spidey/Downloads/code1.png"
+local icon2 = "/home/spidey/Downloads/code.png"
+local icon3 = "/home/spidey/Downloads/code.png"
+local icon4 = "/home/spidey/Downloads/code.png"
+local icon5 = "/home/spidey/Downloads/code.png"
+local icon6 = "/home/spidey/Downloads/code.png"
+local icon7 = "/home/spidey/Downloads/code.png"
+local icon8 = "/home/spidey/Downloads/code.png"
+local icon9 = "/home/spidey/Downloads/code.png"
+
 
 local taglist = awful.widget.taglist {
     screen          = awful.screen.focused(),
     filter          = function(t, args)
-        return #t:clients() > 0
+        if t.selected or #t:clients() > 0 then
+            return true
+        end
     end,
+
     style           = {
         shape = gears.shape.powerline,
-        shape_border_color = '#8c52ff', -- Change this color to match base_color
+        shape_border_color = '#8c52ff',
         shape_border_width = 3,
-        bg_focus = "#000000"
+        bg_focus = "#8c52ff",
+        bg_occupied = "#000000",
+        bg_urgent = "#8c52ff"
     },
     layout          = {
         spacing        = -12,
@@ -801,7 +840,6 @@ local taglist = awful.widget.taglist {
             widget = wibox.widget.separator,
         },
         layout         = wibox.layout.fixed.horizontal,
-        widget         = separatorLine,
     },
     widget_template = {
         {
@@ -813,15 +851,14 @@ local taglist = awful.widget.taglist {
                         {
                             id     = 'index_role',
                             widget = wibox.widget.textbox,
-
                         },
                         margins = 4,
                         widget  = wibox.container.margin,
                     },
-                    bg     = '#000000',
+                    bg       = '#00000000',
                     bg_focus = "#8c52ff",
-                    shape  = gears.shape.circle,
-                    widget = wibox.container.background,
+                    shape    = gears.shape.circle,
+                    widget   = wibox.container.background,
                 },
                 {
                     {
@@ -831,38 +868,59 @@ local taglist = awful.widget.taglist {
                     margins = 0,
                     widget  = wibox.container.margin,
                 },
-                
                 layout = wibox.layout.fixed.horizontal,
             },
             left   = 18,
             right  = 18,
             widget = wibox.container.margin,
         },
+        style = {
+            color = "#",
+        },
         id              = 'background_role',
         widget          = wibox.container.background,
         -- Add support for hover colors and an index label
         create_callback = function(self, c3, index, objects) --luacheck: no unused args
-            self:get_children_by_id('index_role')[1].markup = '<b> ' .. index .. ' </b>'
+            if index == 1 then
+                self:get_children_by_id('icon_role')[1]:set_image(icon1)
+            elseif index == 2 then
+                self:get_children_by_id('icon_role')[1]:set_image(icon2)
+            elseif index == 3 then
+                self:get_children_by_id('icon_role')[1]:set_image(icon3)
+            elseif index == 4 then
+                self:get_children_by_id('icon_role')[1]:set_image(icon4)
+            elseif index == 5 then
+                self:get_children_by_id('icon_role')[1]:set_image(icon5)
+            elseif index == 6 then
+                self:get_children_by_id('icon_role')[1]:set_image(icon6)
+            elseif index == 7 then
+                self:get_children_by_id('icon_role')[1]:set_image(icon7)
+            elseif index == 8 then
+                self:get_children_by_id('icon_role')[1]:set_image(icon8)
+            elseif index == 9 then
+                self:get_children_by_id('icon_role')[1]:set_image(icon9)
+            end
             self:connect_signal('mouse::enter', function()
-                if self.bg ~= '#aaaaaa' then
-                    self.backup     = self.bg
-                    self.has_backup = true
+                if awful.tag.selected(mouse.screen) == c3 then
+                    self.bg = '#8c52ff'  -- Active tag background color
+                else
+                    self.bg = '#000000'  -- Inactive tag background color
                 end
-                self.bg = '#8c52ff'
             end)
             self:connect_signal('mouse::leave', function()
                 if self.has_backup then self.bg = self.backup end
             end)
         end,
         update_callback = function(self, c3, index, objects) --luacheck: no unused args
-            self:get_children_by_id('index_role')[1].markup = '<b> ' .. index .. ' </b>'
+            self:get_children_by_id('index_role')[1].markup = '<b> ' .. ' </b>'
         end,
     },
     buttons         = taglist_buttons
 }
 
-
 -- Create a container to hold the line and taglist
+separatorLine.forced_width = 100
+separatorLine.forced_height = 4
 local container = wibox.layout.fixed.vertical()
 container:setup {
     {
@@ -877,11 +935,154 @@ container:setup {
 
 }
 
+local buttons_container = wibox.widget {
+    layout = wibox.layout.fixed.horizontal,
+    {
+        -- First button (play button)
+        image = "/home/spidey/Downloads/prev2.png", -- Replace with the path to your play button icon
+        widget = wibox.widget.imagebox,
+        forced_width = 40,
+        forced_height = 30,
+    },
+    {
+        -- Second button (pause button)
+        image = "/home/spidey/Downloads/pause.png", -- Replace with the path to your play button icon
+        widget = wibox.widget.imagebox,
+        forced_width = 40,
+        forced_height = 30,
+    },
+    {
+        -- Third button (stop button)
+        image = "/home/spidey/Downloads/next2.png", -- Replace with the path to your play button icon
+        widget = wibox.widget.imagebox,
+        forced_width = 40,
+        forced_height = 30,
+    },
+}
+
+local inner_box = wibox.widget {
+    {
+        {
+            layout = wibox.layout.flex.horizontal,
+            wibox.container.margin(buttons_container, 13, 0, 0, 0),
+            widget = wibox.container.margin,
+        },
+        widget = wibox.container.background,
+        bg = "#04001e",
+        shape = function(cr, width, height)
+            gears.shape.rounded_rect(cr, width, height, 16)
+        end,
+        forced_height = 30,
+        forced_width = 135,
+    },
+    layout = wibox.container.place,
+    halign = "center",
+    valign = "center",
+}
+
+local rounded_music_container = wibox.widget {
+    layout = wibox.container.place,
+    {
+        inner_box,
+        widget = wibox.container.background,
+        bg = "#5BF0FF",
+        shape = function(cr, width, height)
+            gears.shape.rounded_rect(cr, width, height, 16)
+        end,
+        forced_height = 35,
+        forced_width = 150
+    },
+    halign = "center",
+    valign = "center"
+}
+
+
+
+local left_group = wibox.widget {
+    {
+        container,
+        layout = wibox.layout.align.horizontal,
+    },
+    widget = wibox.container.background,
+    shape = function(cr, w, h)
+        gears.shape.rounded_rect(cr, w, h, 8)
+    end,
+    border_width = 2,
+    border_color = "#8c52ff",
+    forced_width = 800, -- Adjust the width as needed
+    forced_height = 40,
+}
+
+local center_group = wibox.widget {
+    {
+        rounded_music_container,
+        layout = wibox.layout.align.horizontal,
+    },
+    widget = wibox.container.background,
+    shape = function(cr, w, h)
+        gears.shape.rounded_rect(cr, w, h, 8)
+    end,
+    border_width = 2,
+    border_color = "#8c52ff",
+    forced_width = 300, -- Adjust the width as needed
+    forced_height = 40,
+}
+
+local right_group = wibox.widget {
+    {
+        -- Your right-aligned content here
+        layout = wibox.layout.align.horizontal,
+    },
+    widget = wibox.container.background,
+    shape = function(cr, w, h)
+        gears.shape.rounded_rect(cr, w, h, 8)
+    end,
+    border_width = 2,
+    border_color = "#8c52ff",
+    forced_width = 100, -- Adjust the width as needed
+    forced_height = 40,
+}
+
 -- setup
 wb1:setup {
     layout = wibox.layout.fixed.horizontal,
-    container,
+    left_group,
+    center_group,
+    right_group,
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- inet speed here
 
