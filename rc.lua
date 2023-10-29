@@ -621,11 +621,16 @@ local function createIconContainer(icons, commandsList)
             forced_width = 30,
             forced_height = 30,
             widget = wibox.widget.imagebox,
-            on_click = function()
-                awful.spawn.with_shell("rofi -show drun")
-            end
         }
         local icon_with_margin = wibox.container.margin(icon_widget, 0, 0, 8, 4)
+
+        -- Set the click event
+        icon_widget:buttons(gears.table.join(
+            awful.button({}, 1, function()
+                awful.spawn(commandsList[i])
+            end)
+        ))
+
         icon_container:add(icon_with_margin)
     end
 
@@ -635,7 +640,7 @@ end
 
 -- Define your sets of icons
 local cmdList1 = {
-    "rofi -show dmenu"
+    "rofi -show run"
 }
 
 local icons1 = {
@@ -643,13 +648,13 @@ local icons1 = {
 }
 
 local cmdList2 = {
-    "rofi -show dmenu",
-    "rofi -show dmenu",
-    "rofi -show dmenu",
-    "rofi -show dmenu",
-    "rofi -show dmenu",
-    "rofi -show dmenu",
-    "rofi -show dmenu",
+    "firefox --new-window https://discord.com/channels/@me",
+    "firefox",
+    "firefox --new-window https://github.com/",
+    "alacritty -e btop",
+    "firefox --new-window https://www.reddit.com/",
+    "firefox --new-window https://open.spotify.com",
+    "vbox",
 }
 
 local icons2 = {
@@ -671,9 +676,9 @@ local icons3 = {
 }
 
 -- Create icon containers using the function
-local centered_icon1 = wibox.container.place(createIconContainer(icons1,cmdList1), "center")
-local centered_icon2 = wibox.container.place(createIconContainer(icons2,cmdList2), "center")
-local centered_icon3 = wibox.container.place(createIconContainer(icons3,cmdList3), "center")
+local centered_icon1 = wibox.container.place(createIconContainer(icons1, cmdList1), "center")
+local centered_icon2 = wibox.container.place(createIconContainer(icons2, cmdList2), "center")
+local centered_icon3 = wibox.container.place(createIconContainer(icons3, cmdList3), "center")
 centered_icon3.fg = "#ffffff"
 -- separator
 
@@ -764,7 +769,6 @@ wb:setup {
     paddedLine,
     icon3_grp
 }
-
 
 
 
@@ -921,9 +925,9 @@ local taglist = awful.widget.taglist {
             end
             self:connect_signal('mouse::enter', function()
                 if awful.tag.selected(mouse.screen) == c3 then
-                    self.bg = '#8c52ff'  -- Active tag background color
+                    self.bg = '#8c52ff' -- Active tag background color
                 else
-                    self.bg = '#000000'  -- Inactive tag background color
+                    self.bg = '#000000' -- Inactive tag background color
                 end
             end)
             self:connect_signal('mouse::leave', function()
