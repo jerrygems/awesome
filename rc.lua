@@ -1049,8 +1049,12 @@ local center_group = wibox.widget {
     forced_height = 40,
 }
 
+local volumewidget = wibox.widget.textbox()
+vicious.register(volumewidget, vicious.widgets.volume, "Volume: $1%", 2, "Master")
+
 local right_group = wibox.widget {
     {
+        volumewidget,
         -- Your right-aligned content here
         layout = wibox.layout.align.horizontal,
     },
@@ -1116,7 +1120,6 @@ local update_speed = function()
     )
 end
 
-update_speed()
 
 local speed_timer = timer({ timeout = 0.5 })
 speed_timer:connect_signal("timeout", function()
@@ -1161,7 +1164,11 @@ end
 
 update_ip_widget()
 
---
+local ip_timer = timer({ timeout = 3 })
+ip_timer:connect_signal("timeout", function()
+    update_ip_widget()
+end)
+ip_timer:start()
 
 
 -- Start the timer
