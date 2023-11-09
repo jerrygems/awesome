@@ -1,0 +1,102 @@
+configuration{
+    display-drun:"Applications: ";
+    display-window:"Windows: ";
+    drun-display-format:"{icon} {name}";
+    font:"JetBrainsMono Nerd Font Medium 10";
+    mode:"run";
+    show-icons:true;
+    icon-theme: "Papirus";
+}
+
+* {
+    transparenthalf:rgba(0, 0, 0, 0.5);
+    transparent:rgba(0,0,0,0);
+    black:#00000000;
+    lightsky:#5effe4;
+    skyOne:#5bf0ff;
+    lightblue:#4a9eff;
+    purple:#9a26ff;
+    purplee:#ea00ff;
+    lightred:#ff78a0;
+    white:#ffffff;
+    purpleOne:#8c52ff;
+    bg:#00000000;
+    bg-alt:#333333;
+    fg:#ffffff;
+    fg-alt:#ffffff;
+    border-radius:8px;
+    background-color:@bg;
+    border:0;
+    margin:0;
+    padding:4;
+    spacing:0;
+}
+
+window{
+    width:45%;
+    border:4px;
+    border-color:@skyOne;
+    background-color:@black;
+}
+
+element{
+    padding:1;
+    margin:1;
+    border:2;
+    background-color:@black;
+    text-color:@fg-alt;
+}
+element selected{
+    text-color:@black;
+}
+
+element-text {
+    background-color:inherit;
+    text-color:inherit;
+    vertical-align:0.5;
+}
+element-icon{
+    size:30;
+}
+element.selected.normal{
+    border-color:@purpleOne;
+    background-color:@black;
+}
+element.normal.normal{
+    border-color:@black;
+    background-color:@black;
+    text-color:@skyOne;
+}
+element.alternate.normal{
+    border-color:@black;
+    background-color:@black;
+    text-color:@skyOne;
+}
+entry{
+    background-color:@black;
+    padding:12;
+    text-color:@white;
+}
+
+inputbar{
+    children:[prompt, entry];
+}
+listview{
+    border-color:@skyOne;
+    background-color:@black;
+    columns:1;
+    lines:8;
+    scrollbar:false;
+}
+
+mainbox{
+    background-color:@black;
+    children:[inputbar,listview];
+}
+
+prompt{
+    background-color:@black;
+    enabled:true;
+    padding:12 0 0 12;
+    text-color:@fg;
+}

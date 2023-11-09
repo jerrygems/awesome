@@ -2,41 +2,32 @@ local gears = require("gears")
 local awful = require("awful")
 local wibox = require("wibox")
 
-
-local icon1 = "/home/spidey/.config/awesome/iconion/house1.png"
-local icon2 = "/home/spidey/.config/awesome/iconion/bash.png"
-local icon3 = "/home/spidey/.config/awesome/iconion/bash.png"
-local icon4 = "/home/spidey/.config/awesome/iconion/bash.png"
-local icon5 = "/home/spidey/.config/awesome/iconion/browser.png"
-local icon6 = "/home/spidey/.config/awesome/iconion/vm.png"
-local icon7 = "/home/spidey/.config/awesome/iconion/code1.png"
-local icon8 = "/home/spidey/.config/awesome/iconion/code1.png"
-local icon9 = "/home/spidey/.config/awesome/iconion/chat.png"
-
 local taglist = awful.widget.taglist {
-    screen          = awful.screen.focused(),
-    filter          = function(t, args)
+    screen = awful.screen.focused(),
+    filter = function(t, args)
         if #t:clients() > 0 or t.selected then
             return true
         end
     end,
 
-    style           = {
+    style = {
         shape = gears.shape.powerline,
         shape_border_color = '#8c52ff',
         shape_border_width = 1,
         bg_focus = "#8c52ff",
         bg_occupied = "#00000000",
         bg_urgent = "#8c52ff",
+        font = "JetBrainsMono Nerd Font 18"
     },
-    layout          = {
-        spacing        = -16,
+    layout = {
+        spacing = -16,
         spacing_widget = {
-            color  = '#8c52ff',
-            shape  = gears.shape.powerline,
-            widget = wibox.widget.separator,
+            color = '#8c52ff',
+            shape = gears.shape.powerline,
+            widget = wibox.widget.separator
         },
-        layout         = wibox.layout.fixed.horizontal,
+        forced_height = 30,
+        layout = wibox.layout.fixed.horizontal
     },
     widget_template = {
         {
@@ -46,54 +37,40 @@ local taglist = awful.widget.taglist {
                     {
 
                         {
-                            id     = 'index_role',
-                            widget = wibox.widget.textbox,
+                            id = 'index_role',
+                            widget = wibox.widget.textbox
                         },
                         margins = 4,
-                        widget  = wibox.container.margin,
+                        widget = wibox.container.margin
                     },
-                    bg       = '#00000000',
+                    bg = '#00000000',
                     bg_focus = "#8c52ff",
-                    shape    = gears.shape.circle,
-                    widget   = wibox.container.background,
+                    shape = gears.shape.circle,
+                    widget = wibox.container.background
                 },
                 {
                     {
-                        id     = 'icon_role',
-                        widget = wibox.widget.imagebox,
+                        id = 'icon_role',
+                        widget = wibox.widget.imagebox
                     },
-                    margins = 0,
-                    widget  = wibox.container.margin,
+                    margins = 2,
+                    widget = wibox.container.margin
                 },
-                layout = wibox.layout.fixed.horizontal,
+                {
+                    id = 'text_role',
+                    widget = wibox.widget.textbox
+                },
+                layout = wibox.layout.fixed.horizontal
             },
-            left   = 18,
-            right  = 18,
-            widget = wibox.container.margin,
+            left = 18,
+            right = 18,
+            widget = wibox.container.margin
         },
-        id              = 'background_role',
-        widget          = wibox.container.background,
+        id = 'background_role',
+        widget = wibox.container.background,
         -- Add support for hover colors and an index label
-        create_callback = function(self, c3, index, objects) --luacheck: no unused args
-            if index == 1 then
-                self:get_children_by_id('icon_role')[1]:set_image(icon1)
-            elseif index == 2 then
-                self:get_children_by_id('icon_role')[1]:set_image(icon2)
-            elseif index == 3 then
-                self:get_children_by_id('icon_role')[1]:set_image(icon3)
-            elseif index == 4 then
-                self:get_children_by_id('icon_role')[1]:set_image(icon4)
-            elseif index == 5 then
-                self:get_children_by_id('icon_role')[1]:set_image(icon5)
-            elseif index == 6 then
-                self:get_children_by_id('icon_role')[1]:set_image(icon6)
-            elseif index == 7 then
-                self:get_children_by_id('icon_role')[1]:set_image(icon7)
-            elseif index == 8 then
-                self:get_children_by_id('icon_role')[1]:set_image(icon8)
-            elseif index == 9 then
-                self:get_children_by_id('icon_role')[1]:set_image(icon9)
-            end
+        create_callback = function(self, c3, index, objects) -- luacheck: no unused args
+
             self:connect_signal('mouse::enter', function()
                 if awful.tag.selected(mouse.screen) == c3 then
                     self.bg = '#8c52ff' -- Active tag background color
@@ -102,16 +79,110 @@ local taglist = awful.widget.taglist {
                 end
             end)
             self:connect_signal('mouse::leave', function()
-                if self.has_backup then self.bg = self.backup end
+                if self.has_backup then
+                    self.bg = self.backup
+                end
             end)
         end,
-        update_callback = function(self, c3, index, objects) --luacheck: no unused args
+        update_callback = function(self, c3, index, objects) -- luacheck: no unused args
             self:get_children_by_id('index_role')[1].markup = '<b> ' .. ' </b>'
-        end,
+        end
     },
-    buttons         = taglist_buttons
+    buttons = taglist_buttons,
+    awful.tag.add("󰋜 ", {
+        icon = "",
+        layout = awful.layout.suit.tile,
+        master_fill_policy = "master_width_factor",
+        gap_single_client = true,
+        gap = 15,
+        screen = s,
+        selected = true
+
+    }),
+    awful.tag.add("󰜈 ", {
+        icon = "",
+        layout = awful.layout.suit.floating,
+        master_fill_policy = "master_width_factor",
+        gap_single_client = true,
+        gap = 15,
+        screen = s,
+        selected = true
+
+    }),
+    awful.tag.add("󰜈 ", {
+        icon = "",
+        layout = awful.layout.suit.floating,
+        master_fill_policy = "master_width_factor",
+        gap_single_client = true,
+        gap = 15,
+        screen = s,
+        selected = true
+
+    }),
+    awful.tag.add(" ", {
+        icon = "",
+        layout = awful.layout.suit.floating,
+        master_fill_policy = "master_width_factor",
+        gap_single_client = true,
+        gap = 15,
+        screen = s,
+        selected = true
+
+    }),
+    awful.tag.add(" ", {
+        icon = "",
+        layout = awful.layout.suit.floating,
+        master_fill_policy = "master_width_factor",
+        gap_single_client = true,
+        gap = 15,
+        screen = s,
+        selected = true
+
+    }),
+    awful.tag.add(" ", {
+        icon = "",
+        layout = awful.layout.suit.fair,
+        master_fill_policy = "master_width_factor",
+        gap_single_client = true,
+        gap = 15,
+        screen = s,
+        selected = true
+
+    }),
+    awful.tag.add(" ", {
+        icon = "",
+        layout = awful.layout.suit.tile,
+        master_fill_policy = "master_width_factor",
+        gap_single_client = true,
+        gap = 15,
+        screen = s,
+        selected = true
+
+    }),
+    awful.tag.add("󰎄 ", {
+        icon = "",
+        layout = awful.layout.suit.floating,
+        master_fill_policy = "master_width_factor",
+        gap_single_client = true,
+        gap = 15,
+        screen = s,
+        selected = true
+
+    }),
+    awful.tag.add("󰭹 ", {
+        icon = "",
+        layout = awful.layout.suit.floating,
+        master_fill_policy = "master_width_factor",
+        gap_single_client = true,
+        gap = 15,
+        screen = s,
+        selected = true
+
+    })
+
 }
 
 return {
     taglist = taglist
 }
+

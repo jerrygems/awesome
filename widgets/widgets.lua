@@ -5,38 +5,45 @@ local awful = require("awful")
 
 local volume_bar = wibox.widget {
 
-    max_value        = 1,
-    forced_height    = 30,
-    forced_width     = 300,
-    paddings         = 1,
-    border_width     = 0,
-    border_color     = "#ffffff",
+    max_value = 1,
+    forced_height = 30,
+    forced_width = 300,
+    paddings = 1,
+    border_width = 0,
+    border_color = "#ffffff",
     background_color = "#8c53ff",
-    shape            = gears.shape.rounded_bar,
-    bar_shape        = gears.shape.rounded_bar,
-    widget           = wibox.widget.progressbar,
-    bg               = "#8c52ff",
-    color            = "#5bf0ff",
+    shape = gears.shape.rounded_bar,
+    bar_shape = gears.shape.rounded_bar,
+    widget = wibox.widget.progressbar,
+    bg = "#8c52ff",
+    color = "#5bf0ff"
 
 }
 
 vicious.register(volume_bar, vicious.widgets.volume, "$1", 0.3, "Master")
 
-
 local battery_bar = wibox.widget {
 
-    max_value        = 1,
-    forced_height    = 30,
-    forced_width     = 300,
-    paddings         = 1,
-    border_width     = 0,
-    border_color     = "#ffffff",
+    max_value = 1,
+    forced_height = 20,
+    forced_width = 50,
+    paddings = 1,
+    border_width = 0,
+    border_color = "#ffffff",
     background_color = "#8c53ff",
-    shape            = gears.shape.rounded_bar,
-    bar_shape        = gears.shape.rounded_bar,
-    widget           = wibox.widget.progressbar,
-    bg               = "#8c52ff",
-    color            = "#5bf0ff",
+    shape = function(cr, w, h)
+        gears.shape.rounded_rect(cr, w, h, 4)
+    end,
+    bar_shape = function(cr, w, h)
+        gears.shape.rounded_rect(cr, w, h, 4)
+    end,
+    widget = wibox.widget.progressbar,
+    {
+        widget = wibox.widget.textbox,
+        text = "50% battery"
+    },
+    bg = "#8c52ff",
+    color = "#5bf0ff"
 
 }
 
@@ -54,40 +61,41 @@ vicious.register(battery_bar, vicious.widgets.bat, function(widget, args)
     return args[2]
 end, 2, "BAT1")
 
+
+
 local cpu_bar = wibox.widget {
 
-    max_value        = 1,
-    forced_height    = 30,
-    forced_width     = 300,
-    paddings         = 1,
-    border_width     = 0,
-    border_color     = "#ffffff",
+    max_value = 1,
+    forced_height = 30,
+    forced_width = 300,
+    paddings = 1,
+    border_width = 0,
+    border_color = "#ffffff",
     background_color = "#8c53ff",
-    shape            = gears.shape.rounded_bar,
-    bar_shape        = gears.shape.rounded_bar,
-    widget           = wibox.widget.progressbar,
-    bg               = "#8c52ff",
-    color            = "#5bf0ff",
+    shape = gears.shape.rounded_bar,
+    bar_shape = gears.shape.rounded_bar,
+    widget = wibox.widget.progressbar,
+    bg = "#8c52ff",
+    color = "#5bf0ff"
 
 }
 
 vicious.register(cpu_bar, vicious.widgets.cpufreq, "$1 GHz", 2, "cpu0")
 
-
 local ram_bar = wibox.widget {
 
-    max_value        = 1,
-    forced_height    = 30,
-    forced_width     = 300,
-    paddings         = 1,
-    border_width     = 0,
-    border_color     = "#ffffff",
+    max_value = 1,
+    forced_height = 30,
+    forced_width = 300,
+    paddings = 1,
+    border_width = 0,
+    border_color = "#ffffff",
     background_color = "#8c53ff",
-    shape            = gears.shape.rounded_bar,
-    bar_shape        = gears.shape.rounded_bar,
-    widget           = wibox.widget.progressbar,
-    bg               = "#8c52ff",
-    color            = "#5bf0ff",
+    shape = gears.shape.rounded_bar,
+    bar_shape = gears.shape.rounded_bar,
+    widget = wibox.widget.progressbar,
+    bg = "#8c52ff",
+    color = "#5bf0ff"
 
 }
 
@@ -100,16 +108,15 @@ local separatorLine = wibox.widget {
     shape = gears.shape.rounded_bar,
     color = "#8c52ff",
     forced_width = 0,
-    forced_height = 3,
+    forced_height = 3
 }
 
 local separatorCircle = wibox.widget {
     widget = wibox.widget.separator, -- adjust the width of the separator
-    color = "#8c52ff",               -- adjust the color of the separator
-    shape = gears.shape.circle,      -- use a circular shape for dots
-    forced_height = 5,
+    color = "#8c52ff", -- adjust the color of the separator
+    shape = gears.shape.circle, -- use a circular shape for dots
+    forced_height = 5
 }
-
 
 -- music button widget
 
@@ -121,22 +128,22 @@ local buttons_container = wibox.widget {
         image = "/home/spidey/.config/awesome/iconion/prev2.png", -- Replace with the path to your play button icon
         widget = wibox.widget.imagebox,
         forced_width = 40,
-        forced_height = 30,
+        forced_height = 30
     },
     {
         -- Second button (pause button)
         image = "/home/spidey/.config/awesome/iconion/pause.png", -- Replace with the path to your play button icon
         widget = wibox.widget.imagebox,
         forced_width = 40,
-        forced_height = 30,
+        forced_height = 30
     },
     {
         -- Third button (stop button)
         image = "/home/spidey/.config/awesome/iconion/next2.png", -- Replace with the path to your play button icon
         widget = wibox.widget.imagebox,
         forced_width = 40,
-        forced_height = 30,
-    },
+        forced_height = 30
+    }
 }
 
 local inner_box = wibox.widget {
@@ -144,19 +151,19 @@ local inner_box = wibox.widget {
         {
             layout = wibox.layout.flex.horizontal,
             wibox.container.margin(buttons_container, 13, 0, 0, 0),
-            widget = wibox.container.margin,
+            widget = wibox.container.margin
         },
         widget = wibox.container.background,
-        bg = "#04001e",
+        bg = "#393D7600",
         shape = function(cr, width, height)
             gears.shape.rounded_rect(cr, width, height, 16)
         end,
         forced_height = 30,
-        forced_width = 135,
+        forced_width = 135
     },
     layout = wibox.container.place,
     halign = "center",
-    valign = "center",
+    valign = "center"
 }
 
 local rounded_music_container = wibox.widget {
@@ -164,7 +171,7 @@ local rounded_music_container = wibox.widget {
     {
         inner_box,
         widget = wibox.container.background,
-        bg = "#5BF0FF",
+        bg = "#5BF0FF00",
         shape = function(cr, width, height)
             gears.shape.rounded_rect(cr, width, height, 16)
         end,
@@ -175,7 +182,6 @@ local rounded_music_container = wibox.widget {
     valign = "center"
 }
 
-
 -- ip addresses here
 local ip_widget = wibox.widget.textbox()
 ip_widget.font = "JetBrainsMono Nerd Font 10" -- Set your desired font and size
@@ -183,7 +189,7 @@ ip_widget.font = "JetBrainsMono Nerd Font 10" -- Set your desired font and size
 local ip_container = wibox.layout.fixed.vertical()
 -- Update function to fetch and update IP addresses
 local function update_ip_widget()
-    local interfaces = { "enp62s0", "eth0","lo", "ngrok0", "tun0","wlan0", "tun1", "wlp61s0", "docker0" }
+    local interfaces = {"enp62s0", "eth0", "lo", "ngrok0", "tun0", "wlan0", "tun1", "wlp61s0", "docker0"}
     local ip_text = ""
     ip_container:reset()
     for _, iface in ipairs(interfaces) do
@@ -202,8 +208,6 @@ end
 
 update_ip_widget()
 
-
-
 -- inet speed here
 
 local inet_speed = wibox.widget.textbox()
@@ -211,12 +215,12 @@ inet_speed.font = "JetBrainsMono Nerd Font 11"
 local update_speed = function()
     -- Update inet_speed widget with vicious
     vicious.register(inet_speed, vicious.widgets.net,
-        '<span color="#8c52ff">Download Speed\t : \t${wlan0 down_kb} KB/s ⬇️ \nUpload Speed\t : \t${wlan0 up_kb} KB/s ⬆️</span>'
-    )
+        '<span color="#8c52ff">Download Speed\t : \t${wlan0 down_kb} KB/s ⬇️ \nUpload Speed\t : \t${wlan0 up_kb} KB/s ⬆️</span>')
 end
 
-
-local speed_timer = timer({ timeout = 0.5 })
+local speed_timer = timer({
+    timeout = 0.5
+})
 speed_timer:connect_signal("timeout", function()
     update_speed()
 end)
@@ -233,18 +237,18 @@ local rect_angle = wibox.widget {
         {
             clock_widget,
             widget = wibox.container.margin,
-            left = 3,
+            left = 3
         },
         widget = wibox.container.background,
         bg = "#00000000",
         fg = "#8c52ff",
         shape = gears.shape.rounded_rect,
         forced_width = 28,
-        forced_height = 65,
+        forced_height = 65
     },
     layout = wibox.container.place,
     halign = "center", -- Center horizontally
-    valign = "center", -- Center vertically
+    valign = "center" -- Center vertically
 }
 
 local rounded_clock_container = wibox.widget {
@@ -273,6 +277,6 @@ return {
     rounded_music_container = rounded_music_container,
     ip_widget = ip_widget,
     inet_speed = inet_speed,
-    rounded_clock_container = rounded_clock_container,
+    rounded_clock_container = rounded_clock_container
 
 }
