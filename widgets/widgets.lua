@@ -3,24 +3,10 @@ local vicious = require("vicious")
 local gears = require("gears")
 local awful = require("awful")
 
-local volume_bar = wibox.widget {
-
-    max_value = 1,
-    forced_height = 30,
-    forced_width = 300,
-    paddings = 1,
-    border_width = 0,
-    border_color = "#ffffff",
-    background_color = "#8c53ff",
-    shape = gears.shape.rounded_bar,
-    bar_shape = gears.shape.rounded_bar,
-    widget = wibox.widget.progressbar,
-    bg = "#8c52ff",
-    color = "#5bf0ff"
-
-}
-
-vicious.register(volume_bar, vicious.widgets.volume, "$1", 0.3, "Master")
+-- vicious.register(volume_bar, function()
+--     local vol = vicious.widgets.volume("$1", 0.3, "Master")
+--     volume_bar:set_value(vol)
+--   end, 5)
 
 local battery_bar = wibox.widget {
 
@@ -61,46 +47,47 @@ vicious.register(battery_bar, vicious.widgets.bat, function(widget, args)
     return args[2]
 end, 2, "BAT1")
 
+local cpu_bar = wibox.widget.textbox()
+cpu_bar.font = "JetBrainsMono Nerd Font 15"
+cpu_bar.fg = "#8c52ff"
+vicious.register(cpu_bar, vicious.widgets.cpu, "<span color='#8c52ff'>󰻠 $1% |</span>", 2)
 
+local ram_bar = wibox.widget.textbox()
+ram_bar.font = "JetBrainsMono Nerd Font 15"
 
-local cpu_bar = wibox.widget {
+vicious.register(ram_bar, vicious.widgets.mem, "<span color='#8c52ff'> $2MB |</span>", 2)
+local vol_bar = wibox.widget.textbox()
+vol_bar.font = "JetBrainsMono Nerd Font 15"
 
-    max_value = 1,
-    forced_height = 30,
-    forced_width = 300,
-    paddings = 1,
-    border_width = 0,
-    border_color = "#ffffff",
-    background_color = "#8c53ff",
-    shape = gears.shape.rounded_bar,
-    bar_shape = gears.shape.rounded_bar,
-    widget = wibox.widget.progressbar,
-    bg = "#8c52ff",
-    color = "#5bf0ff"
+local function update_volume(widget, delta)
+    awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ " .. delta, false)
+    awful.spawn.easy_async("pactl get-sink-volume @DEFAULT_SINK@", function(stdout)
+        local volume = tonumber(stdout:match("(%d+)%%"))
+        volume = math.min(volume, 100)  -- Ensure volume doesn't exceed 100
+        widget:set_markup_silently(string.format("<span color='#8c52ff'> %d%% |</span>", volume))
+    end)
+end
 
+-- Add scrolling functionality
+vol_bar:buttons(gears.table.join(
+    awful.button({}, 4, function()
+        update_volume(vol_bar, "+5%")
+    end),
+    awful.button({}, 5, function()
+        update_volume(vol_bar, "-5%")
+    end)
+))
+vicious.register(vol_bar, vicious.widgets.volume, "<span color='#8c52ff'> $1% |</span>", 0.2, "Master")
+
+local info_container = wibox.widget {
+    layout = wibox.layout.fixed.horizontal,
+    spacing = 6,
+
+    ram_bar,
+    cpu_bar,
+    vol_bar,
+    wibox.container.place(battery_bar)
 }
-
-vicious.register(cpu_bar, vicious.widgets.cpufreq, "$1 GHz", 2, "cpu0")
-
-local ram_bar = wibox.widget {
-
-    max_value = 1,
-    forced_height = 30,
-    forced_width = 300,
-    paddings = 1,
-    border_width = 0,
-    border_color = "#ffffff",
-    background_color = "#8c53ff",
-    shape = gears.shape.rounded_bar,
-    bar_shape = gears.shape.rounded_bar,
-    widget = wibox.widget.progressbar,
-    bg = "#8c52ff",
-    color = "#5bf0ff"
-
-}
-
-vicious.register(ram_bar, vicious.widgets.mem, "RAM: $1% ($2MB/$3MB)", 13)
-
 -- separator widgets
 
 local separatorLine = wibox.widget {
@@ -119,7 +106,7 @@ local separatorCircle = wibox.widget {
 }
 
 -- music button widget
-
+local playPauseToggle = false
 local buttons_container = wibox.widget {
     bg = "#00000000",
     layout = wibox.layout.fixed.horizontal,
@@ -128,21 +115,37 @@ local buttons_container = wibox.widget {
         image = "/home/spidey/.config/awesome/iconion/prev2.png", -- Replace with the path to your play button icon
         widget = wibox.widget.imagebox,
         forced_width = 40,
-        forced_height = 30
+        forced_height = 30,
+        buttons = awful.button({}, 1, function()
+            awful.spawn("playerctl prev")
+            playPauseToggle = true
+        end)
     },
     {
         -- Second button (pause button)
         image = "/home/spidey/.config/awesome/iconion/pause.png", -- Replace with the path to your play button icon
         widget = wibox.widget.imagebox,
         forced_width = 40,
-        forced_height = 30
+        forced_height = 30,
+        buttons = awful.button({}, 1, function()
+            if playPauseToggle then
+                awful.spawn("playerctl pause") -- Execute pause command
+            else
+                awful.spawn("playerctl play") -- Execute play command
+            end
+            playPauseToggle = not playPauseToggle -- Toggle the state
+        end)
     },
     {
         -- Third button (stop button)
         image = "/home/spidey/.config/awesome/iconion/next2.png", -- Replace with the path to your play button icon
         widget = wibox.widget.imagebox,
         forced_width = 40,
-        forced_height = 30
+        forced_height = 30,
+        buttons = awful.button({}, 1, function()
+            awful.spawn("playerctl next")
+            playPauseToggle = true
+        end)
     }
 }
 
@@ -260,17 +263,28 @@ local rounded_clock_container = wibox.widget {
         shape = gears.shape.rounded_rect,
         forced_width = 35,
         forced_height = 65
-
     },
     halign = "center",
     valign = "center"
 }
 -- 
 
+local layoutBox = awful.widget.layoutbox()
+layoutBox.font = "JetBrainsMono Nerd Font 5 bold"
+
+layoutBox:buttons(gears.table.join(awful.button({}, 1, function()
+    awful.layout.inc(1)
+end), awful.button({}, 3, function()
+    awful.layout.inc(-1)
+end), awful.button({}, 4, function()
+    awful.layout.inc(1)
+end), awful.button({}, 5, function()
+    awful.layout.inc(-1)
+end)))
+
 return {
-    vol_bar = volume_bar,
-    ram_bar = ram_bar,
-    cpu_bar = cpu_bar,
+    layoutBox = layoutBox,
+    info_container = info_container,
     bat_bar = battery_bar,
     separatorLine = separatorLine,
     separatorCircle = separatorCircle,
