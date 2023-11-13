@@ -891,7 +891,6 @@ bssid_tb.font = "JetBrainsMono Nerd Font 10"
 local ssid_tb = wibox.widget.textbox()
 ssid_tb.font = "JetBrainsMono Nerd Font 10"
 
-
 local nmcli_widget = wibox.widget {
     layout = wibox.layout.align.horizontal,
     expand = "none",
