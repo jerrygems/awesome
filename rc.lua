@@ -809,7 +809,6 @@ container:setup{
     widget = wibox.container.margin,
     margins = 4,
     bg = "#8c52ff"
-
 }
 
 local left_group = wibox.widget {
@@ -910,3 +909,4 @@ beautiful.notification_height = 100
 beautiful.border_width = 2
 beautiful.border_focus = "#8c52ff"
 beautiful.border_normal = "#5bf0ff"
+beautiful.bg_systray = "#00000000"

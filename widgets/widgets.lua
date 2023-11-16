@@ -63,21 +63,21 @@ local function update_volume(widget, delta)
     awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ " .. delta, false)
     awful.spawn.easy_async("pactl get-sink-volume @DEFAULT_SINK@", function(stdout)
         local volume = tonumber(stdout:match("(%d+)%%"))
-        volume = math.min(volume, 100)  -- Ensure volume doesn't exceed 100
+        volume = math.min(volume, 100) -- Ensure volume doesn't exceed 100
         widget:set_markup_silently(string.format("<span color='#8c52ff'> %d%% |</span>", volume))
     end)
 end
 
 -- Add scrolling functionality
-vol_bar:buttons(gears.table.join(
-    awful.button({}, 4, function()
-        update_volume(vol_bar, "+5%")
-    end),
-    awful.button({}, 5, function()
-        update_volume(vol_bar, "-5%")
-    end)
-))
+vol_bar:buttons(gears.table.join(awful.button({}, 4, function()
+    update_volume(vol_bar, "+5%")
+end), awful.button({}, 5, function()
+    update_volume(vol_bar, "-5%")
+end)))
 vicious.register(vol_bar, vicious.widgets.volume, "<span color='#8c52ff'> $1% |</span>", 0.2, "Master")
+
+local systemtray = wibox.widget.systray()
+systemtray.opacity = 1
 
 local info_container = wibox.widget {
     layout = wibox.layout.fixed.horizontal,
@@ -86,6 +86,7 @@ local info_container = wibox.widget {
     ram_bar,
     cpu_bar,
     vol_bar,
+    wibox.container.margin(systemtray),
     wibox.container.place(battery_bar)
 }
 -- separator widgets
@@ -281,6 +282,65 @@ end), awful.button({}, 4, function()
 end), awful.button({}, 5, function()
     awful.layout.inc(-1)
 end)))
+-- 
+-- 
+-- the nmcli widget stuff
+local bar_tb = wibox.widget.textbox()
+bar_tb.font = "JetBrainsMono Nerd Font 10"
+local bssid_tb = wibox.widget.textbox()
+bssid_tb.font = "JetBrainsMono Nerd Font 10"
+local ssid_tb = wibox.widget.textbox()
+ssid_tb.font = "JetBrainsMono Nerd Font 10"
+
+local nmcli_widget = wibox.widget {
+    layout = wibox.layout.align.horizontal,
+    expand = "none",
+    {
+        wibox.container.margin(bar_tb, 0, 20, 0, 0), -- Adjust the left margin for bar_tb
+        widget = wibox.container.background
+    },
+    {
+        wibox.container.margin(bssid_tb, 0, 120, 0, 0), -- Adjust the left margin for bssid_tb
+        widget = wibox.container.background
+    },
+    {
+        wibox.container.margin(ssid_tb, -140, 0, 0, 0), -- No left margin for ssid_tb
+        widget = wibox.container.margin
+    }
+}
+local function parse_output(output)
+    local rows = {}
+    for line in output:gmatch("[^\r\n]+") do
+        local bar, bssid, ssid = line:match("^(.-)%s+(.-)%s+(.+)$")
+        rows[#rows + 1] = {bar, bssid, ssid}
+    end
+
+    return rows
+end
+
+local function update_textboxes(rows)
+    local bar_text = ""
+    local bssid_text = ""
+    local ssid_text = ""
+
+    for _, row in ipairs(rows) do
+        -- You can customize the colors based on your preferences
+        bar_text = bar_text .. string.format("<span color='#8c52ff'>%s</span>\n", row[1])
+        bssid_text = bssid_text .. string.format("<span color='#8c52ff'>%s</span>\n", row[2])
+        ssid_text = ssid_text .. string.format("<span color='#8c52ff'>%s</span>\n", row[3])
+    end
+
+    bar_tb:set_markup(bar_text)
+    bssid_tb:set_markup(bssid_text)
+    ssid_tb:set_markup(ssid_text)
+end
+
+awful.spawn.easy_async("nmcli -f bars,bssid,ssid dev wifi", function(output)
+    local rows = parse_output(output)
+    update_textboxes(rows)
+end)
+
+-- local graph_popup = wibox.widget.textbox()
 
 return {
     layoutBox = layoutBox,
@@ -291,6 +351,6 @@ return {
     rounded_music_container = rounded_music_container,
     ip_widget = ip_widget,
     inet_speed = inet_speed,
-    rounded_clock_container = rounded_clock_container
-
+    rounded_clock_container = rounded_clock_container,
+    nmcli_widget = nmcli_widget
 }
