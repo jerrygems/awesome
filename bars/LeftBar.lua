@@ -1,8 +1,13 @@
 local wibox = require("wibox")
 local widgets = require("widgets.widgets")
 local icon_tray = require("icon_tray.icon")
+local awful = require("awful")
+local gears = require("gears")
+-- test
+local naughty = require("naughty")
 
 -- Define your sets of icons
+
 local cmdList1 = {"rofi -show run"}
 
 local icons1 = {"/home/spidey/.config/awesome/iconion/menu.png"}
@@ -51,10 +56,88 @@ iconf_group:add(widgets.rounded_clock_container)
 -- Add the power button (centered_icon3) to group_three
 iconf_group:add(centered_iconf)
 
-local iconf_grp = wibox.container.margin(iconf_group, 0, 0, 220, 0)
+local iconf_grp = wibox.container.margin(iconf_group, 0, 0, 0, 0)
 
+-- tasklist here
+local s1 = awful.screen.focused()
 
-return{
+local tasklist_buttons = gears.table.join(awful.button({}, 1, function(c)
+    if c == client.focus then
+        c.minimized = true
+    else
+        c:emit_signal("request::activate", "tasklist", {
+            raise = true
+        })
+    end
+end), awful.button({}, 3, function()
+    awful.menu.client_list({
+        theme = {
+            width = 250
+        }
+    })
+end), awful.button({}, 4, function()
+    awful.client.focus.byidx(1)
+end), awful.button({}, 5, function()
+    awful.client.focus.byidx(-1)
+end))
+
+local taskBox = awful.widget.tasklist {
+    screen = s1,
+    filter = awful.widget.tasklist.filter.currenttags,
+    buttons = tasklist_buttons,
+    style = {
+        shape_border_width = 1,
+        shape_border_color = '#8c52ff',
+        bg_normal = "#5bf0ff",
+        bg_focus = "#8c52ff",
+        shape = function(cr, width, height)
+            gears.shape.rounded_rect(cr, width, height, 6)
+        end
+    },
+    layout = {
+        spacing = 5,
+        spacing_widget = {
+            valign = 'center',
+            halign = 'center',
+            widget = wibox.container.place
+        },
+        layout = wibox.layout.fixed.vertical,
+        forced_height = 240
+    },
+    widget_template = {
+        {
+            {
+                {
+                    {
+                        id = 'icon_role',
+                        widget = wibox.widget.imagebox
+                    },
+                    margins = 4,
+                    widget = wibox.container.margin
+                },
+                layout = wibox.layout.fixed.horizontal
+            },
+            left = 10,
+            right = 10,
+            widget = wibox.container.margin
+        },
+        id = 'background_role',
+        widget = wibox.container.background,
+        create_callback = function(self, c, index, objects)
+            -- Add your logic to set the icon based on the client class
+            local icon_path = "/home/spidey/.config/awesome/iconion/bash.png"
+            if c.class == "Alacritty" then
+                icon_path = "/home/spidey/.config/awesome/iconion/bash.png"
+
+            elseif c.class == "firefox" then
+                icon_path = "/home/spidey/.config/awesome/iconion/firefox.png"
+            end
+            self:get_children_by_id('icon_role')[1].image = awful.gears.load(icon_path)
+        end
+    }
+}
+
+return {
     icon1_group = icon1_group,
     icon2_group = icon2_group,
     icon3_group = icon3_group,
@@ -62,6 +145,5 @@ return{
     iconf_grp = iconf_grp,
     separatorCirclebottom = separatorCirclebottom,
     separatorCircletop = separatorCircletop,
-
-
+    tasklist_buttons = tasklist_buttons
 }

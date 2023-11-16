@@ -691,6 +691,63 @@ local wb = awful.wibar {
     end
 }
 
+local s1 = awful.screen.focused()
+local taskBox = awful.widget.tasklist {
+    screen = s1,
+    filter = awful.widget.tasklist.filter.currenttags,
+    buttons = tasklist_buttons,
+    style = {
+        shape_border_width = 1,
+        shape_border_color = '#8c52ff',
+        bg_normal = "#5bf0ff",
+        bg_focus = "#8c52ff",
+        shape = function(cr, width, height)
+            gears.shape.rounded_rect(cr, width, height, 6)
+        end
+    },
+    layout = {
+        spacing = 5,
+        spacing_widget = {
+            valign = 'center',
+            halign = 'center',
+            widget = wibox.container.place
+        },
+        layout = wibox.layout.fixed.vertical,
+        forced_height = 240
+    },
+    widget_template = {
+        {
+            {
+                {
+                    {
+                        id = 'icon_role',
+                        widget = wibox.widget.imagebox
+                    },
+                    margins = 4,
+                    widget = wibox.container.margin
+                },
+                layout = wibox.layout.fixed.horizontal
+            },
+            left = 10,
+            right = 10,
+            widget = wibox.container.margin
+        },
+        id = 'background_role',
+        widget = wibox.container.background,
+        create_callback = function(self, c, index, objects)
+            -- Add your logic to set the icon based on the client class
+            local icon_path = "/home/spidey/.config/awesome/iconion/bash.png"
+            if c.class == "Alacritty" then
+                icon_path = "/home/spidey/.config/awesome/iconion/bash.png"
+
+            elseif c.class == "firefox" then
+                icon_path = "/home/spidey/.config/awesome/iconion/firefox.png"
+            end
+            self:get_children_by_id('icon_role')[1].image = icon_path
+        end
+    }
+}
+
 -- setup
 wb:setup{
 
@@ -705,6 +762,7 @@ wb:setup{
     LeftBar.paddedLine,
     LeftBar.icon3_group,
     LeftBar.paddedLine,
+    taskBox,
     LeftBar.iconf_grp
 }
 
@@ -765,7 +823,7 @@ local left_group = wibox.widget {
     end,
     border_width = 2,
     border_color = "#8c52ff",
-    forced_width = 800, -- Adjust the width as needed
+    forced_width = 800,
     forced_height = 40
 }
 
@@ -780,7 +838,7 @@ local center_group = wibox.widget {
     end,
     border_width = 2,
     border_color = "#8c52ff",
-    forced_width = 300, -- Adjust the width as needed
+    forced_width = 300,
     forced_height = 40
 }
 
@@ -795,11 +853,10 @@ local right_group = wibox.widget {
         gears.shape.rounded_rect(cr, w, h, 8)
     end,
     widget = wibox.container.place,
-    forced_width = 500, -- Adjust the width as needed
+    forced_width = 500,
     forced_height = 40,
     halign = "right"
 }
-
 -- setup
 wb1:setup{
     layout = wibox.layout.fixed.horizontal,
@@ -807,54 +864,6 @@ wb1:setup{
     center_group,
     wibox.container.margin(right_group, 190, 0, 0, 0)
 }
-
-local speed_popup = awful.popup {
-    widget = wibox.widget {
-        layout = wibox.layout.fixed.vertical,
-
-        {
-            layout = wibox.container.margin,
-            bottom = 20,
-            {
-                widgets.inet_speed,
-                left = 30,
-                layout = wibox.container.margin
-            },
-            forced_height = 80,
-            forced_width = 400
-        },
-        wibox.container.margin(widgets.separatorLine, 0, 0, 0, 5),
-        {
-            layout = wibox.container.margin,
-            bottom = 20,
-            {
-                widgets.ip_widget,
-                top = 0,
-                left = 30,
-                layout = wibox.container.margin
-
-            },
-            forced_height = 120,
-            forced_width = 400
-        }
-    },
-    border_width = 4,
-    border_color = '#8c52ff',
-    bg = '#00000000',
-    ontop = false,
-    shape = function(cr, w, h)
-        gears.shape.rounded_rect(cr, w, h, 14)
-    end
-}
-
-awful.placement.top_left(speed_popup, {
-    margins = {
-        top = 100,
-        left = 100
-    },
-    parent = awful.screen.focused()
-})
-speed_popup.visible = true
 
 local textbox_output = wibox.widget.textbox()
 
@@ -883,95 +892,6 @@ local command_widget = wibox.widget {
 -- awful.spawn.easy_async(command, function(stdout, stderr, exitreason, exitcode)
 --     update_output(textbox_output, stdout, stderr, exitreason, exitcode)
 -- end)
-
-local bar_tb = wibox.widget.textbox()
-bar_tb.font = "JetBrainsMono Nerd Font 10"
-local bssid_tb = wibox.widget.textbox()
-bssid_tb.font = "JetBrainsMono Nerd Font 10"
-local ssid_tb = wibox.widget.textbox()
-ssid_tb.font = "JetBrainsMono Nerd Font 10"
-
-local nmcli_widget = wibox.widget {
-    layout = wibox.layout.align.horizontal,
-    expand = "none",
-    {
-        wibox.container.margin(bar_tb, 0, 20, 0, 0), -- Adjust the left margin for bar_tb
-        widget = wibox.container.background
-    },
-    {
-        wibox.container.margin(bssid_tb, 0, 120, 0, 0), -- Adjust the left margin for bssid_tb
-        widget = wibox.container.background
-    },
-    {
-        wibox.container.margin(ssid_tb, -140, 0, 0, 0), -- No left margin for ssid_tb
-        widget = wibox.container.margin
-    }
-}
-local function parse_output(output)
-    local rows = {}
-    for line in output:gmatch("[^\r\n]+") do
-        local bar, bssid, ssid = line:match("^(.-)%s+(.-)%s+(.+)$")
-        rows[#rows + 1] = {bar, bssid, ssid}
-    end
-
-    return rows
-end
-
-local function update_textboxes(rows)
-    local bar_text = ""
-    local bssid_text = ""
-    local ssid_text = ""
-
-    for _, row in ipairs(rows) do
-        -- You can customize the colors based on your preferences
-        bar_text = bar_text .. string.format("<span color='#8c52ff'>%s</span>\n", row[1])
-        bssid_text = bssid_text .. string.format("<span color='#8c52ff'>%s</span>\n", row[2])
-        ssid_text = ssid_text .. string.format("<span color='#8c52ff'>%s</span>\n", row[3])
-    end
-
-    bar_tb:set_markup(bar_text)
-    bssid_tb:set_markup(bssid_text)
-    ssid_tb:set_markup(ssid_text)
-end
-
-awful.spawn.easy_async("nmcli -f bars,bssid,ssid dev wifi", function(output)
-    local rows = parse_output(output)
-    update_textboxes(rows)
-end)
-
-local articles_widget = awful.popup {
-    widget = wibox.widget {
-        layout = wibox.layout.fixed.vertical,
-
-        {
-            layout = wibox.container.margin,
-            bottom = 20,
-            {
-                nmcli_widget,
-                left = 30,
-                layout = wibox.container.margin
-            },
-            forced_height = 200,
-            forced_width = 400
-        }
-    },
-    border_width = 4,
-    border_color = '#8c52ff',
-    bg = '#00000000',
-    ontop = false,
-    shape = function(cr, w, h)
-        gears.shape.rounded_rect(cr, w, h, 14)
-    end
-}
-
-awful.placement.bottom_left(articles_widget, {
-    margins = {
-        bottom = 260,
-        left = 100
-    },
-    parent = awful.screen.focused()
-})
-articles_widget.visible = true
 
 awful.spawn("picom --config /home/spidey/.config/picom/picom.conf")
 gears.wallpaper.maximized("/home/spidey/Downloads/wall3.jpg", s)
