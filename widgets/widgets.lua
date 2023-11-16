@@ -100,9 +100,9 @@ local separatorLine = wibox.widget {
 }
 
 local separatorCircle = wibox.widget {
-    widget = wibox.widget.separator, -- adjust the width of the separator
-    color = "#8c52ff", -- adjust the color of the separator
-    shape = gears.shape.circle, -- use a circular shape for dots
+    widget = wibox.widget.separator,
+    color = "#8c52ff",
+    shape = gears.shape.circle,
     forced_height = 5
 }
 
@@ -113,7 +113,7 @@ local buttons_container = wibox.widget {
     layout = wibox.layout.fixed.horizontal,
     {
         -- First button (play button)
-        image = "/home/spidey/.config/awesome/iconion/prev2.png", -- Replace with the path to your play button icon
+        image = "/home/spidey/.config/awesome/iconion/prev2.png",
         widget = wibox.widget.imagebox,
         forced_width = 40,
         forced_height = 30,
@@ -124,22 +124,22 @@ local buttons_container = wibox.widget {
     },
     {
         -- Second button (pause button)
-        image = "/home/spidey/.config/awesome/iconion/pause.png", -- Replace with the path to your play button icon
+        image = "/home/spidey/.config/awesome/iconion/pause.png",
         widget = wibox.widget.imagebox,
         forced_width = 40,
         forced_height = 30,
         buttons = awful.button({}, 1, function()
             if playPauseToggle then
-                awful.spawn("playerctl pause") -- Execute pause command
+                awful.spawn("playerctl pause")
             else
-                awful.spawn("playerctl play") -- Execute play command
+                awful.spawn("playerctl play")
             end
-            playPauseToggle = not playPauseToggle -- Toggle the state
+            playPauseToggle = not playPauseToggle
         end)
     },
     {
         -- Third button (stop button)
-        image = "/home/spidey/.config/awesome/iconion/next2.png", -- Replace with the path to your play button icon
+        image = "/home/spidey/.config/awesome/iconion/next2.png",
         widget = wibox.widget.imagebox,
         forced_width = 40,
         forced_height = 30,
@@ -188,7 +188,7 @@ local rounded_music_container = wibox.widget {
 
 -- ip addresses here
 local ip_widget = wibox.widget.textbox()
-ip_widget.font = "JetBrainsMono Nerd Font 10" -- Set your desired font and size
+ip_widget.font = "JetBrainsMono Nerd Font 10"
 
 local ip_container = wibox.layout.fixed.vertical()
 -- Update function to fetch and update IP addresses
@@ -212,12 +212,10 @@ end
 
 update_ip_widget()
 
--- inet speed here
 
 local inet_speed = wibox.widget.textbox()
 inet_speed.font = "JetBrainsMono Nerd Font 11"
 local update_speed = function()
-    -- Update inet_speed widget with vicious
     vicious.register(inet_speed, vicious.widgets.net,
         '<span color="#8c52ff">Download Speed\t : \t${wlan0 down_kb} KB/s ⬇️ \nUpload Speed\t : \t${wlan0 up_kb} KB/s ⬆️</span>')
 end
@@ -230,8 +228,6 @@ speed_timer:connect_signal("timeout", function()
 end)
 speed_timer:start()
 
--- bordered clock 
--- Clock
 local clock_format = "%H\n%M\n%S"
 local clock_widget = wibox.widget.textclock(clock_format, 1)
 clock_widget.font = "JetBrainsMono Nerd Font 10 bold"
@@ -251,8 +247,8 @@ local rect_angle = wibox.widget {
         forced_height = 65
     },
     layout = wibox.container.place,
-    halign = "center", -- Center horizontally
-    valign = "center" -- Center vertically
+    halign = "center",
+    valign = "center" 
 }
 
 local rounded_clock_container = wibox.widget {
@@ -296,15 +292,15 @@ local nmcli_widget = wibox.widget {
     layout = wibox.layout.align.horizontal,
     expand = "none",
     {
-        wibox.container.margin(bar_tb, 0, 20, 0, 0), -- Adjust the left margin for bar_tb
+        wibox.container.margin(bar_tb, 0, 20, 0, 0),
         widget = wibox.container.background
     },
     {
-        wibox.container.margin(bssid_tb, 0, 120, 0, 0), -- Adjust the left margin for bssid_tb
+        wibox.container.margin(bssid_tb, 0, 120, 0, 0),
         widget = wibox.container.background
     },
     {
-        wibox.container.margin(ssid_tb, -140, 0, 0, 0), -- No left margin for ssid_tb
+        wibox.container.margin(ssid_tb, -140, 0, 0, 0),
         widget = wibox.container.margin
     }
 }
@@ -324,7 +320,6 @@ local function update_textboxes(rows)
     local ssid_text = ""
 
     for _, row in ipairs(rows) do
-        -- You can customize the colors based on your preferences
         bar_text = bar_text .. string.format("<span color='#8c52ff'>%s</span>\n", row[1])
         bssid_text = bssid_text .. string.format("<span color='#8c52ff'>%s</span>\n", row[2])
         ssid_text = ssid_text .. string.format("<span color='#8c52ff'>%s</span>\n", row[3])
