@@ -4,12 +4,12 @@ local widgets = require('widgets.widgets')
 local gears = require("gears")
 local vicious = require("vicious")
 local naughty = require("naughty")
+local rcnf = require("rice_config")
+
+
 naughty.notify({
     text = gears.animation
 })
-
--- 
--- 
 
 local speed_popup = awful.popup {
     widget = wibox.widget {
@@ -41,18 +41,18 @@ local speed_popup = awful.popup {
             forced_width = 400
         }
     },
-    border_width = 4,
-    border_color = '#8c52ff',
-    bg = '#00000000',
+    border_width = rcnf.vars.all_widget_border_width,
+    border_color = rcnf.vars.all_widget_border_color,
+    bg = rcnf.vars.all_widget_background,
     ontop = false,
     shape = function(cr, w, h)
-        gears.shape.rounded_rect(cr, w, h, 14)
+        gears.shape.rounded_rect(cr, w, h, rcnf.vars.all_widget_radius)
     end
 }
 awful.placement.top_left(speed_popup, {
     margins = {
-        top = 100,
-        left = 100
+        top = rcnf.vars.widget1_top,
+        left = rcnf.vars.widget1_left
     },
     parent = awful.screen.focused()
 })
@@ -76,19 +76,19 @@ local net_devices_widget = awful.popup {
             forced_width = 400
         }
     },
-    border_width = 4,
-    border_color = '#8c52ff',
-    bg = '#00000000',
+    border_width = rcnf.vars.all_widget_border_width,
+    border_color = rcnf.vars.all_widget_border_color,
+    bg = rcnf.vars.all_widget_background,
     ontop = false,
     shape = function(cr, w, h)
-        gears.shape.rounded_rect(cr, w, h, 14)
+        gears.shape.rounded_rect(cr, w, h, rcnf.vars.all_widget_radius)
     end
 }
 
 awful.placement.bottom_left(net_devices_widget, {
     margins = {
-        bottom = 260,
-        left = 100
+        bottom = rcnf.vars.widget2_bottom,
+        left = rcnf.vars.widget2_left
     },
     parent = awful.screen.focused()
 })
@@ -201,20 +201,20 @@ end)
 local another_popup = awful.popup {
     widget = wibox.widget {
         layout = wibox.layout.fixed.vertical,
-        wibox.container.margin(cpu_arc, 0, 0, 15, 0),
-        wibox.container.margin(disk_progressbar, 10, 10, 0, 0),
-        wibox.container.margin(memory_arc, 0, 0, 0, 15),
+        wibox.container.margin(cpu_arc,0,0,15,0),
+        wibox.container.margin(disk_progressbar,10,10,0,0),
+        wibox.container.margin(memory_arc,0,0,0,15),
         forced_height = 250,
         forced_width = 150
     },
-    border_width = 4,
-    border_color = '#8c52ff',
-    bg = '#00000000',
+    border_width = rcnf.vars.all_widget_border_width,
+    border_color = rcnf.vars.all_widget_border_color,
+    bg = rcnf.vars.all_widget_background,
     ontop = false,
     shape = function(cr, w, h)
-        gears.shape.rounded_rect(cr, w, h, 14)
-    end
-
+        gears.shape.rounded_rect(cr, w, h, rcnf.vars.all_widget_radius)
+    end,
+    
 }
 
 awful.placement.top_right(another_popup, {
@@ -228,5 +228,4 @@ another_popup.visible = true
 
 return {
     speed_popup = speed_popup
-
 }

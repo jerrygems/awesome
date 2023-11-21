@@ -8,25 +8,27 @@ local naughty = require("naughty")
 
 -- Define your sets of icons
 
+local username = os.getenv("USER") or os.getenv("USERNAME")
+
 local cmdList1 = {"rofi -show run"}
 
-local icons1 = {"/home/spidey/.config/awesome/iconion/menu.png"}
+local icons1 = {"/home/" .. username .. "/.config/awesome/iconion/menu.png"}
 
 local cmdList2 = {"discord", "firefox", "firefox --new-window https://github.com/",
                   "firefox --new-window https://www.reddit.com/", "spotify", "obsidian"}
 
-local icons2 = {"/home/spidey/.config/awesome/iconion/Vector.png", "/home/spidey/.config/awesome/iconion/firefox.png",
-                "/home/spidey/.config/awesome/iconion/github.png", "/home/spidey/.config/awesome/iconion/reddit.png",
-                "/home/spidey/.config/awesome/iconion/spotify.png", "/home/spidey/.config/awesome/iconion/obsidian.png"}
+local icons2 = {"/home/" .. username .. "/.config/awesome/iconion/Vector.png", "/home/" .. username .. "/.config/awesome/iconion/firefox.png",
+                "/home/" .. username .. "/.config/awesome/iconion/github.png", "/home/" .. username .. "/.config/awesome/iconion/reddit.png",
+                "/home/" .. username .. "/.config/awesome/iconion/spotify.png", "/home/" .. username .. "/.config/awesome/iconion/obsidian.png"}
 
 local cmdList3 = {"virtualbox", "VBoxManage startvm ubuntu", "alacritty -e sudo docker run -it jerry_at_archlinux"}
 
-local icons3 = {"/home/spidey/.config/awesome/iconion/vbox.png", "/home/spidey/.config/awesome/iconion/ubuntu.png",
-                "/home/spidey/.config/awesome/iconion/docker.png"}
+local icons3 = {"/home/" .. username .. "/.config/awesome/iconion/vbox.png", "/home/" .. username .. "/.config/awesome/iconion/ubuntu.png",
+                "/home/" .. username .. "/.config/awesome/iconion/docker.png"}
 
 local cmdListf = {"shutdown now"}
 
-local iconsf = {"/home/spidey/.config/awesome/iconion/power.png"}
+local iconsf = {"/home/" .. username .. "/.config/awesome/iconion/power.png"}
 
 -- Create icon containers using the function
 local centered_icon1 = wibox.container.place(icon_tray.createIconContainer(icons1, cmdList1), "center")

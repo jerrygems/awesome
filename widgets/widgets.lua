@@ -2,6 +2,9 @@ local wibox = require("wibox")
 local vicious = require("vicious")
 local gears = require("gears")
 local awful = require("awful")
+local rcnf = require("rice_config")
+
+local username = os.getenv("USER") or os.getenv("USERNAME")
 
 -- vicious.register(volume_bar, function()
 --     local vol = vicious.widgets.volume("$1", 0.3, "Master")
@@ -14,8 +17,8 @@ local battery_bar = wibox.widget {
     forced_height = 20,
     forced_width = 50,
     paddings = 1,
-    border_width = 0,
-    border_color = "#ffffff",
+    border_width = 2,
+    border_color = "#5bf0ff",
     background_color = "#8c53ff",
     shape = function(cr, w, h)
         gears.shape.rounded_rect(cr, w, h, 4)
@@ -76,10 +79,7 @@ end), awful.button({}, 5, function()
 end)))
 vicious.register(vol_bar, vicious.widgets.volume, "<span color='#8c52ff'> $1% |</span>", 0.2, "Master")
 
-
 local systemtray = wibox.widget.systray()
-systemtray.opacity = 1
-
 
 local info_container = wibox.widget {
     layout = wibox.layout.fixed.horizontal,
@@ -96,16 +96,16 @@ local info_container = wibox.widget {
 local separatorLine = wibox.widget {
     widget = wibox.widget.separator,
     shape = gears.shape.rounded_bar,
-    color = "#8c52ff",
+    color = rcnf.vars.vertical_separator_line_color,
     forced_width = 0,
-    forced_height = 3
+    forced_height = rcnf.vars.vertical_separator_line_thickness
 }
 
 local separatorCircle = wibox.widget {
-    widget = wibox.widget.separator, -- adjust the width of the separator
-    color = "#8c52ff", 
-    shape = gears.shape.circle, -- use a circular shape for dots
-    forced_height = 5
+    widget = wibox.widget.separator,
+    color = rcnf.vars.separator_dots_color,
+    shape = gears.shape.circle,
+    forced_height = rcnf.vars.separator_dots_height
 }
 
 -- music button widget
@@ -115,7 +115,7 @@ local buttons_container = wibox.widget {
     layout = wibox.layout.fixed.horizontal,
     {
         -- first button or play button
-        image = "/home/spidey/.config/awesome/iconion/prev2.png", -- Replace with the path to your play button icon
+        image = "/home/" .. username .. "/.config/awesome/iconion/prev2.png", -- Replace with the path to your play button icon
         widget = wibox.widget.imagebox,
         forced_width = 40,
         forced_height = 30,
@@ -126,7 +126,7 @@ local buttons_container = wibox.widget {
     },
     {
         -- second button or pause button
-        image = "/home/spidey/.config/awesome/iconion/pause.png", 
+        image = "/home/" .. username .. "/.config/awesome/iconion/pause.png",
         widget = wibox.widget.imagebox,
         forced_width = 40,
         forced_height = 30,
@@ -141,7 +141,7 @@ local buttons_container = wibox.widget {
     },
     {
         -- Third button (stop button)
-        image = "/home/spidey/.config/awesome/iconion/next2.png", -- Replace with the path to your play button icon
+        image = "/home/" .. username .. "/.config/awesome/iconion/next2.png", -- Replace with the path to your play button icon
         widget = wibox.widget.imagebox,
         forced_width = 40,
         forced_height = 30,
@@ -195,7 +195,8 @@ ip_widget.font = "JetBrainsMono Nerd Font 10" -- Set your desired font and size
 local ip_container = wibox.layout.fixed.vertical()
 -- Update function to fetch and update IP addresses
 local function update_ip_widget()
-    local interfaces = {"enp62s0", "eth0", "lo", "ngrok0", "tun0", "wlan0", "tun1", "wlp61s0", "docker0"}
+    local interfaces = {"enp62s0", "eth0", "lo", "ngrok0", "tun0", "wlan0", "wlan1", "tun1", "wlp61s0", "wlp61s1",
+                        "docker0"}
     local ip_text = ""
     ip_container:reset()
     for _, iface in ipairs(interfaces) do
@@ -220,8 +221,12 @@ local inet_speed = wibox.widget.textbox()
 inet_speed.font = "JetBrainsMono Nerd Font 11"
 local update_speed = function()
     -- Update inet_speed widget with vicious
+
     vicious.register(inet_speed, vicious.widgets.net,
-        '<span color="#8c52ff">Download Speed\t : \t${wlan0 down_kb} KB/s ⬇️ \nUpload Speed\t : \t${wlan0 up_kb} KB/s ⬆️</span>')
+        '<span color="#8c52ff">Download Speed\t : \t${' .. rcnf.vars.speed_measure_on_interface ..
+            ' down_kb} KB/s ⬇️ \nUpload Speed\t : \t${' .. rcnf.vars.speed_measure_on_interface ..
+            ' up_kb} KB/s ⬆️</span>')
+
 end
 
 local speed_timer = timer({
@@ -341,7 +346,6 @@ awful.spawn.easy_async("nmcli -f bars,bssid,ssid dev wifi", function(output)
     local rows = parse_output(output)
     update_textboxes(rows)
 end)
-
 
 -- local graph_popup = wibox.widget.textbox()
 
