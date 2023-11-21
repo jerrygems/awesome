@@ -51,16 +51,16 @@ vicious.register(battery_bar, vicious.widgets.bat, function(widget, args)
 end, 2, "BAT1")
 
 local cpu_bar = wibox.widget.textbox()
-cpu_bar.font = "JetBrainsMono Nerd Font 15"
+cpu_bar.font = "" .. rcnf.vars.default_font .. " " .. rcnf.vars.font_size  .. ""
 cpu_bar.fg = "#8c52ff"
 vicious.register(cpu_bar, vicious.widgets.cpu, "<span color='#8c52ff'>󰻠 $1% |</span>", 2)
 
 local ram_bar = wibox.widget.textbox()
-ram_bar.font = "JetBrainsMono Nerd Font 15"
+ram_bar.font = "" .. rcnf.vars.default_font .. " " .. rcnf.vars.font_size  .. ""
 
 vicious.register(ram_bar, vicious.widgets.mem, "<span color='#8c52ff'> $2MB |</span>", 2)
 local vol_bar = wibox.widget.textbox()
-vol_bar.font = "JetBrainsMono Nerd Font 15"
+vol_bar.font = "" .. rcnf.vars.default_font .. " " .. rcnf.vars.font_size  .. ""
 
 local function update_volume(widget, delta)
     awful.spawn("pactl set-sink-volume @DEFAULT_SINK@ " .. delta, false)
@@ -190,7 +190,7 @@ local rounded_music_container = wibox.widget {
 
 -- ip addresses here
 local ip_widget = wibox.widget.textbox()
-ip_widget.font = "JetBrainsMono Nerd Font 10" -- Set your desired font and size
+ip_widget.font = "" .. rcnf.vars.default_font .. " " .. rcnf.vars.font_size_net_speed  .. "" -- Set your desired font and size
 
 local ip_container = wibox.layout.fixed.vertical()
 -- Update function to fetch and update IP addresses
@@ -218,7 +218,7 @@ update_ip_widget()
 -- inet speed here
 
 local inet_speed = wibox.widget.textbox()
-inet_speed.font = "JetBrainsMono Nerd Font 11"
+inet_speed.font = "" .. rcnf.vars.default_font .. " " .. rcnf.vars.font_size_net_speed  .. ""
 local update_speed = function()
     -- Update inet_speed widget with vicious
 
@@ -241,7 +241,7 @@ speed_timer:start()
 -- Clock
 local clock_format = "%H\n%M\n%S"
 local clock_widget = wibox.widget.textclock(clock_format, 1)
-clock_widget.font = "JetBrainsMono Nerd Font 10 bold"
+clock_widget.font = "" .. rcnf.vars.default_font .. " " .. rcnf.vars.clock_font_size .. " bold"
 
 local rect_angle = wibox.widget {
     {

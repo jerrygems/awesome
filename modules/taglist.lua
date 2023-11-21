@@ -1,6 +1,7 @@
 local gears = require("gears")
 local awful = require("awful")
 local wibox = require("wibox")
+local rcnf = require("rice_config")
 
 local taglist = awful.widget.taglist {
     screen = awful.screen.focused(),
@@ -17,7 +18,7 @@ local taglist = awful.widget.taglist {
         bg_focus = "#8c52ff",
         bg_occupied = "#00000000",
         bg_urgent = "#8c52ff",
-        font = "JetBrainsMono Nerd Font 18"
+        font = "" .. rcnf.vars.default_font .. " " .. rcnf.vars.font_size .. ""
     },
     layout = {
         spacing = -16,
@@ -68,14 +69,14 @@ local taglist = awful.widget.taglist {
         },
         id = 'background_role',
         widget = wibox.container.background,
-        -- Add support for hover colors and an index label
-        create_callback = function(self, c3, index, objects) -- luacheck: no unused args
+
+        create_callback = function(self, c3, index, objects) 
 
             self:connect_signal('mouse::enter', function()
                 if awful.tag.selected(mouse.screen) == c3 then
-                    self.bg = '#8c52ff' -- Active tag background color
+                    self.bg = '#8c52ff'
                 else
-                    self.bg = '#00000000' -- Inactive tag background color
+                    self.bg = '#00000000'
                 end
             end)
             self:connect_signal('mouse::leave', function()
@@ -84,7 +85,7 @@ local taglist = awful.widget.taglist {
                 end
             end)
         end,
-        update_callback = function(self, c3, index, objects) -- luacheck: no unused args
+        update_callback = function(self, c3, index, objects) 
             self:get_children_by_id('index_role')[1].markup = '<b> ' .. ' </b>'
         end
     },

@@ -6,6 +6,7 @@ local vars = {
     picom_conf_path = "/home/spidey/.config/picom/picom.conf", -- here you go for your picom config path
     wall="/home/spidey/Downloads/wall3.jpg", -- Define your wallpaper here
     default_font = "JetBrainsMono Nerd Font",
+    font_size = "10",
     notif_font_size = "10",
     notif_bg = "#00000000", 
     notif_fg = "#b16286",
@@ -42,7 +43,10 @@ local vars = {
     progress_outer_bar_color = '#5bf0ff',
 
 
-    speed_measure_on_interface = "eth0" -- OR you can use the eth0
+    speed_measure_on_interface = "eth0", -- OR you can use the eth0
+
+    font_size_net_speed = 10,
+    clock_font_size = 10,
 }
 
 return {

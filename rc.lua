@@ -584,7 +584,6 @@ end)
 -- bar
 local bars_visible = true
 
--- Define keybindings to toggle bars
 local wb = awful.wibar {
     position = "left",
     width = 46,
@@ -727,7 +726,9 @@ container:setup{
     },
     widget = wibox.container.margin,
     margins = 4,
-    bg = "#8c52ff"
+    bg = "#8c52ff",
+    font = "" .. rcnf.vars.default_font .. " " .. rcnf.vars.font_size  .. ""
+
 }
 
 local left_group = wibox.widget {
@@ -742,7 +743,8 @@ local left_group = wibox.widget {
     border_width = 2,
     border_color = "#8c52ff",
     forced_width = 800,
-    forced_height = 40
+    forced_height = 40,
+    font = "" .. rcnf.vars.default_font .. " " .. rcnf.vars.font_size  .. ""
 }
 
 local center_group = wibox.widget {
