@@ -1,10 +1,11 @@
 local beautiful = require("beautiful")
+local username = os.getenv("USER") or os.getenv("USERNAME")
 
 
 
 local vars = {
-    picom_conf_path = "/home/spidey/.config/picom/picom.conf", -- here you go for your picom config path
-    wall="/home/spidey/Downloads/wall3.jpg", -- Define your wallpaper here
+    picom_conf_path = "/home/" .. username .. "/.config/picom/picom.conf", -- here you go for your picom config path
+    wall="/home/" .. username .. "/wall3.jpg", -- Define your wallpaper here
     default_font = "JetBrainsMono Nerd Font",
     font_size = "10",
     notif_font_size = "10",

@@ -623,7 +623,7 @@ local taskBox = awful.widget.tasklist {
         },
 
         layout = wibox.layout.fixed.vertical,
-        forced_height = 240
+        forced_height = 230
     },
 
     widget_template = {
