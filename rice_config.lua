@@ -5,9 +5,9 @@ local username = os.getenv("USER") or os.getenv("USERNAME")
 
 local vars = {
     picom_conf_path = "/home/" .. username .. "/.config/picom/picom.conf", -- here you go for your picom config path
-    wall="/home/" .. username .. "/wall3.jpg", -- Define your wallpaper here
+    wall="/home/" .. username .. "/Downloads/wall3.jpg", -- Define your wallpaper here
     default_font = "JetBrainsMono Nerd Font",
-    font_size = "10",
+    font_size = "14",
     notif_font_size = "10",
     notif_bg = "#00000000", 
     notif_fg = "#b16286",
